@@ -37,6 +37,11 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;fl
 .dot.ok{background:var(--green)}
 .seg{display:inline-flex;background:var(--nav);border-radius:9px;padding:3px}
 .seg button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;padding:4px 9px;border-radius:7px;cursor:pointer}
+.verdict{display:flex;gap:14px;align-items:center;border-radius:12px;padding:14px 16px;border:1px solid}
+.verdict.g{background:var(--green-soft);border-color:var(--green)}.verdict.o{background:var(--orange-soft);border-color:var(--orange)}.verdict.r{background:var(--red-soft);border-color:var(--red)}
+.light{width:16px;height:16px;border-radius:50%;flex:none;display:inline-block}
+.light.g{background:var(--green)}.light.o{background:var(--orange)}.light.r{background:var(--red)}
+tr.rowg td:first-child{box-shadow:inset 4px 0 var(--green)}tr.rowo td:first-child{box-shadow:inset 4px 0 var(--orange)}tr.rowr td:first-child{box-shadow:inset 4px 0 var(--red)}
 .seg button:disabled{opacity:.35;cursor:default}
 .hist-item{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
 .hist-item ul{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:var(--muted)}
@@ -52,7 +57,41 @@ nav{display:flex;flex-direction:column;gap:2px;background:var(--card);border:1px
 .ngroup.closed .grp-items{display:none}
 .grp-items{display:flex;flex-direction:column;gap:1px;margin:0 0 6px 21px;padding-left:12px;border-left:2px solid var(--line)}
 .grp-items button{font-size:13.5px}
-@media(max-width:1000px){.layout{grid-template-columns:1fr}nav{position:static}.grp-items{flex-direction:row;flex-wrap:wrap;margin-left:8px}}
+#menuBtn,#curTab,.nav-backdrop{display:none}
+main{min-width:0}
+.card{overflow-x:auto}
+@media(max-width:1000px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  #menuBtn{display:inline-flex;align-items:center;gap:6px}
+  #curTab{display:block;font-weight:700;font-size:15px;margin:0 0 12px;color:var(--gold)}
+  nav{position:fixed;top:0;left:0;bottom:0;width:min(300px,86vw);z-index:30;overflow-y:auto;border-radius:0 16px 16px 0;transform:translateX(-105%);transition:transform .2s;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+  body.nav-open nav{transform:none}
+  body.nav-open .nav-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:25}
+}
+@media(max-width:640px){
+  .wrap{padding:12px 12px 70px}
+  header{position:sticky;top:0;z-index:20;background:var(--bg);margin:-12px -12px 10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+  header .sub,.status #saveTxt{display:none}
+  h1{font-size:20px} .logo{width:32px;height:32px}
+  header>.row{gap:6px}
+  .g4{grid-template-columns:1fr 1fr}
+  .kpi .val{font-size:19px}
+  .card{padding:14px}
+  input,select,textarea{font-size:16px}
+  .bar-row{grid-template-columns:105px 1fr 74px}
+  .sum-box{grid-template-columns:1fr 1fr}
+  .modal{padding:14px}
+  .hide-sm{display:none}
+  .card{overflow-x:visible}
+  table.stack-sm thead{display:none}
+  table.stack-sm tbody tr{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;padding:12px 0;border-bottom:1px solid var(--line)}
+  table.stack-sm tbody td{border:0;padding:0;min-width:0;text-align:left}
+  table.stack-sm tbody td:first-child{grid-column:1/-1}
+  table.stack-sm tbody td[data-label]:not([data-label=""])::before{content:attr(data-label);display:block;font-size:10.5px;font-weight:600;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+  table.stack-sm input,table.stack-sm select,table.stack-sm .w-lbl{width:100%!important;min-width:0!important}
+  table.stack-sm .row{flex-wrap:wrap!important}
+  table.stack-sm tfoot td{display:inline-block;border:0}
+}
 nav button{border:0;background:transparent;padding:8px 10px;border-radius:9px;font:inherit;font-weight:500;color:var(--ink);cursor:pointer;text-align:left}
 nav button:hover{background:var(--line2)}
 nav button.active{background:var(--gold-soft);color:var(--gold);font-weight:700}
@@ -120,7 +159,7 @@ svg text{font-family:Inter,sans-serif}
 .mt{margin-top:14px}.mt2{margin-top:22px}
 .small{font-size:12px}
 .tbl-scroll{overflow-x:auto}
-.w-lbl{min-width:210px}.w-cat{width:165px}.w-freq{width:120px}.w-mon{width:82px}.w-acc{width:185px}.w-amt{width:100px}
+.w-lbl{min-width:170px}.w-cat{width:150px}.w-freq{width:110px}.w-mon{width:78px}.w-acc{width:165px}.w-amt{width:100px}
 .when{display:flex;gap:6px;align-items:center;white-space:nowrap}
 .when .pill{padding:5px 10px}
 .filter{margin-left:8px}
@@ -139,6 +178,7 @@ svg text{font-family:Inter,sans-serif}
 <div class="wrap">
 <header>
   <div class="brand">
+    <button class="btn small" id="menuBtn" aria-label="Menu">☰</button>
     <div class="logo"><svg viewBox="0 0 24 24"><path d="M2 20 9.5 7l3.6 6.2L15.5 9 22 20z" fill="#fff"/><path d="M9.5 7 7.6 10.3l1.9-1 1.9 1z" fill="#0E7490" opacity=".55"/></svg></div>
     <div><h1>Cime</h1><div class="sub" data-i18n="tagline"></div></div>
   </div>
@@ -147,8 +187,8 @@ svg text{font-family:Inter,sans-serif}
     <div class="seg" id="langSeg"><button data-lang="fr">FR</button><button data-lang="en">EN</button><button data-lang="de">DE</button></div>
     <div class="seg" id="themeSeg"><button data-theme="light" title="Light">☀</button><button data-theme="dark" title="Dark">☾</button></div>
     <div class="seg"><button id="btnUndo" title="Ctrl+Z">↶</button><button id="btnRedo" title="Ctrl+Shift+Z">↷</button></div>
-    <button class="btn small" id="btnHist" data-i18n="history"></button>
-    <button class="btn small" id="btnData" data-i18n="data"></button>
+    <button class="btn small" id="btnHist" title="Historique"><span aria-hidden="true">🕘</span><span class="hide-sm"> <span data-i18n="history"></span></span></button>
+    <button class="btn small" id="btnData" title="Données"><span aria-hidden="true">⇅</span><span class="hide-sm"> <span data-i18n="data"></span></span></button>
   </div>
 </header>
 
@@ -193,7 +233,9 @@ svg text{font-family:Inter,sans-serif}
     </div>
   </div>
 </nav>
+<div class="nav-backdrop" id="navBackdrop"></div>
 <main>
+<div id="curTab"></div>
 <!-- PROFILE -->
 <section class="tab" id="tab-profile">
   <div class="grid g2">
@@ -209,22 +251,31 @@ svg text{font-family:Inter,sans-serif}
 
 <!-- PURCHASE -->
 <section class="tab" id="tab-purchase">
-  <div class="grid g-main">
+  <div class="card">
+    <div class="row"><h2 style="margin:0" data-i18n="pu_mode_q"></h2><span class="spacer"></span>
+      <div class="seg" id="puMode"><button data-pm="own" data-i18n="pm_own"></button><button data-pm="co" data-i18n="pm_co"></button><button data-pm="invest" data-i18n="pm_invest"></button></div></div>
+    <div id="puVerdict" class="mt"></div>
+  </div>
+  <div class="grid g-main mt">
     <div class="card">
       <h2 data-i18n="pu_title"></h2>
       <div class="grid g3" id="puForm"></div>
+      <div id="puInvestBox"></div>
       <h3 class="mt2" data-i18n="pu_equity"></h3>
       <div id="puEquityForm"></div>
+      <div id="puCoBox"></div>
       <div id="puEquity" class="mt"></div>
     </div>
     <div class="card">
       <h2 data-i18n="pu_result"></h2>
       <div id="puChecks" class="checks"></div>
       <div id="puCosts" class="mt"></div>
+      <h3 class="mt2" data-i18n="pu_cmp"></h3>
+      <div id="puCompare"></div>
     </div>
   </div>
   <div class="card mt">
-    <div class="row"><h2 style="margin:0" data-i18n="pu_proj"></h2><span class="spacer"></span><div class="legend"><span><i style="background:var(--gold)"></i><span data-i18n="pu_balance"></span></span><span><i style="background:var(--red)"></i><span data-i18n="pu_cum_int"></span></span><span><i style="background:var(--green)"></i><span data-i18n="pu_cum_amort"></span></span></div></div>
+    <div class="row"><h2 style="margin:0" data-i18n="pu_proj"></h2><span class="spacer"></span><div class="legend" id="puLegend"></div></div>
     <div id="puChart" class="mt"></div>
     <div class="tbl-scroll"><table id="puTbl" class="mt"></table></div>
     <p class="note mt" data-i18n="pu_note"></p>
@@ -264,12 +315,17 @@ svg text{font-family:Inter,sans-serif}
       <div class="seg filter" id="expFilter"><button data-f="all" data-i18n="f_all"></button><button data-f="perso" data-i18n="f_perso"></button><button data-f="common" data-i18n="f_common"></button></div>
       <span class="spacer"></span><button class="btn small" data-add="expenses" data-i18n="add"></button></div>
     <div class="tbl-scroll mt"><table>
-      <thead><tr><th data-i18n="c_item"></th><th data-i18n="c_cat"></th><th data-i18n="c_account"></th><th class="num" data-i18n="c_amount"></th><th data-i18n="c_freq"></th><th data-i18n="c_when"></th><th class="num" data-i18n="c_permonth"></th><th></th></tr></thead>
+      <thead><tr><th data-i18n="c_item"></th><th data-i18n="c_cat"></th><th data-i18n="c_account"></th><th data-i18n="c_bearer"></th><th class="num" data-i18n="c_amount"></th><th data-i18n="c_freq"></th><th data-i18n="c_when"></th><th class="num" data-i18n="c_permonth"></th><th></th></tr></thead>
       <tbody id="expBody"></tbody>
-      <tfoot><tr><td colspan="6"><b data-i18n="total_monthly"></b></td><td class="num" id="expTot"></td><td></td></tr></tfoot>
+      <tfoot><tr><td colspan="7"><b data-i18n="total_monthly"></b></td><td class="num" id="expTot"></td><td></td></tr></tfoot>
     </table></div>
     <div class="sum-box" id="expSummary"></div>
     <p class="note mt" data-i18n="budget_note"></p>
+  </div>
+  <div class="card mt" id="fundCard">
+    <h2 data-i18n="fund_title"></h2>
+    <p class="note" data-i18n="fund_note"></p>
+    <div class="tbl-scroll"><table class="mt"><thead><tr><th data-i18n="c_account"></th><th class="num" data-i18n="c_fund_me"></th><th class="num" data-i18n="c_fund_pt"></th><th class="num" data-i18n="c_fund_out"></th><th class="num" data-i18n="c_fund_net"></th><th class="num" data-i18n="c_fund_share"></th></tr></thead><tbody id="fundBody"></tbody></table></div>
   </div>
   <div class="grid mt">
     <div class="card">
@@ -573,6 +629,38 @@ dl_backup:["Télécharger (.json)","Download (.json)","Herunterladen (.json)"],r
 dl_blocked:["Téléchargement bloqué ici : utilise « Copier ».","Download blocked here: use “Copy”.","Download hier blockiert: «Kopieren» nutzen."],
 coach_nokey:["Coach IA non configuré : ajoute ANTHROPIC_API_KEY dans les variables d'environnement Netlify.","AI coach not configured: add ANTHROPIC_API_KEY to the Netlify environment variables.","KI-Coach nicht konfiguriert: ANTHROPIC_API_KEY in den Netlify-Umgebungsvariablen setzen."],
 f_added:["ajouté","added","hinzugefügt"],f_removed:["supprimé","removed","entfernt"],
+
+pu_mode_q:["Quel type de projet ?","What kind of project?","Welche Art von Projekt?"],pm_own:["Résidence principale","Own home","Eigenheim"],pm_co:["À plusieurs","Co-ownership","Miteigentum"],pm_invest:["Investissement locatif","Buy-to-let","Renditeobjekt"],
+v_g:["Projet faisable","Feasible project","Projekt machbar"],v_o:["Faisable sous conditions","Feasible with conditions","Machbar mit Vorbehalten"],v_r:["Non faisable en l'état","Not feasible as is","So nicht machbar"],
+v_g_d:["Tous les critères bancaires usuels sont remplis.","All usual bank criteria are met.","Alle üblichen Bankkriterien sind erfüllt."],v_o_d:["Un ou plusieurs points sont limites : négocie, renforce l'apport ou réduis le prix.","One or more criteria are borderline: negotiate, add equity or lower the price.","Ein oder mehrere Kriterien sind knapp: verhandeln, Eigenmittel erhöhen oder Preis senken."],v_r_d:["Au moins un critère bloque le financement : voir les points rouges.","At least one criterion blocks financing: see the red items.","Mindestens ein Kriterium verhindert die Finanzierung: siehe rote Punkte."],
+k_eq:["Fonds propres","Own funds","Eigenmittel"],k_eq_d_own:["vert ≥ 20 %, orange 15–20 %","green ≥ 20%, orange 15–20%","grün ≥ 20 %, orange 15–20 %"],k_eq_d_inv:["vert ≥ 25 %, orange 20–25 % (pas de 3a/LPP pour un bien de rendement)","green ≥ 25%, orange 20–25% (no 3a/pension for buy-to-let)","grün ≥ 25 %, orange 20–25 % (kein 3a/BVG bei Renditeobjekten)"],
+k_hard:["Fonds propres hors LPP","Equity excl. pension","Eigenmittel ohne BVG"],k_fees:["Frais d'achat payés en cash","Purchase costs paid in cash","Nebenkosten bar bezahlt"],k_tenab:["Tenue des charges","Affordability","Tragbarkeit"],k_tenab_d:["vert ≤ 33 %, orange 33–38 %","green ≤ 33%, orange 33–38%","grün ≤ 33 %, orange 33–38 %"],
+k_cush:["Réserve restante après achat","Reserve left after purchase","Reserve nach Kauf"],k_cush_d:["vert ≥ 3 mois de dépenses, orange 1–3","green ≥ 3 months of spending, orange 1–3","grün ≥ 3 Monatsausgaben, orange 1–3"],
+k_budget:["Coût mensuel vs ta capacité","Monthly cost vs your capacity","Monatskosten vs. Kapazität"],k_budget_d:["capacité = logement actuel + reste non affecté : {x} CHF/mois","capacity = current housing + unallocated: CHF {x}/month","Kapazität = aktuelles Wohnen + nicht Zugeteiltes: {x} CHF/Mt."],
+k_gross:["Rendement brut","Gross yield","Bruttorendite"],k_gross_d:["vert ≥ 4 %, orange 3–4 %","green ≥ 4%, orange 3–4%","grün ≥ 4 %, orange 3–4 %"],k_cf:["Cash-flow mensuel après impôts","Monthly cash flow after tax","Monatlicher Cashflow nach Steuern"],k_cf_d:["vert ≥ 0, orange jusqu'à −300 CHF","green ≥ 0, orange down to CHF −300","grün ≥ 0, orange bis −300 CHF"],
+k_coeq:["Équilibre des apports","Balance of contributions","Ausgewogenheit der Beiträge"],k_coeq_d:["écart max entre part de propriété et part d'apport : vert ≤ 5 pts, orange ≤ 15 pts","max gap between ownership share and contribution share: green ≤ 5 pts, orange ≤ 15 pts","max. Abweichung Eigentums- vs. Beitragsanteil: grün ≤ 5 Pkt., orange ≤ 15 Pkt."],
+pu_cmp:["Comparer les 3 options","Compare the 3 options","3 Varianten vergleichen"],
+co_title:["Co-acquéreurs","Co-buyers","Miterwerbende"],co_add:["+ Co-acquéreur","+ Co-buyer","+ Miterwerbende/r"],co_name:["Nom","Name","Name"],co_share:["Part de propriété %","Ownership %","Eigentumsanteil %"],co_cash:["Apport cash","Cash contribution","Bareinlage"],co_lpp:["Apport LPP","Pension contribution","BVG-Einlage"],co_inc:["Revenu brut / an","Gross income / yr","Bruttoeinkommen / Jahr"],
+co_me:["Toi","You","Du"],co_tbl:["Répartition","Split","Aufteilung"],co_part_price:["Part du prix","Share of price","Anteil Preis"],co_part_eq:["Part de l'apport","Share of equity","Anteil Eigenmittel"],co_part_cost:["Coût / mois","Cost / month","Kosten / Mt."],co_gap:["Écart","Gap","Abweichung"],
+co_note:["Les banques additionnent les revenus de tous les emprunteurs (solidaires de la dette). Formalise les apports inégaux dans une convention de copropriété chez le notaire.","Banks add up the income of all borrowers (jointly liable). Put unequal contributions in a co-ownership agreement with the notary.","Banken addieren die Einkommen aller Kreditnehmenden (solidarisch haftend). Ungleiche Beiträge in einer Miteigentumsvereinbarung beim Notar festhalten."],
+inv_rent:["Loyer mensuel attendu (CHF)","Expected monthly rent (CHF)","Erwartete Monatsmiete (CHF)"],inv_vac:["Vacance locative (%)","Vacancy (%)","Leerstand (%)"],inv_mgmt:["Gérance (% des loyers)","Management (% of rent)","Verwaltung (% der Miete)"],
+inv_out:["Rendement brut <b>{g}</b> · net <b>{n}</b> · sur fonds propres <b>{r}</b><br>Loyers nets {y} CHF/an · cash-flow {cf} CHF/mois avant impôts, <b>{cft} CHF/mois</b> après impôts (~{tx} CHF d'impôt sur le revenu locatif).","Gross yield <b>{g}</b> · net <b>{n}</b> · on equity <b>{r}</b><br>Net rents CHF {y}/yr · cash flow CHF {cf}/month before tax, <b>CHF {cft}/month</b> after tax (~CHF {tx} tax on rental income).","Bruttorendite <b>{g}</b> · netto <b>{n}</b> · auf Eigenkapital <b>{r}</b><br>Nettomieten {y} CHF/Jahr · Cashflow {cf} CHF/Mt. vor Steuern, <b>{cft} CHF/Mt.</b> nach Steuern (~{tx} CHF Steuer auf Mietertrag)."],
+inv_note:["Pour un bien de rendement : pas de retrait 3a/LPP, 25 % de fonds propres en général, revenu locatif imposable (intérêts, entretien et gérance déductibles).","For buy-to-let: no 3a/pension withdrawal, usually 25% equity, rental income taxable (interest, upkeep and management deductible).","Für Renditeobjekte: kein 3a/BVG-Bezug, meist 25 % Eigenmittel, Mietertrag steuerbar (Zinsen, Unterhalt, Verwaltung abziehbar)."],
+pu_cum_cf:["Cash-flow cumulé","Cumulative cash flow","Kumulierter Cashflow"],
+pu_total_inv:["Bilan sur {n} ans : loyers nets − (frais d'achat + intérêts + entretien + gérance) = <b>{x} CHF</b> ({m} CHF/mois en moyenne, avant impôts). Capital amorti : {a} CHF.","Result over {n} years: net rents − (purchase costs + interest + upkeep + management) = <b>CHF {x}</b> (CHF {m}/month on average, before tax). Principal repaid: CHF {a}.","Bilanz über {n} Jahre: Nettomieten − (Nebenkosten + Zinsen + Unterhalt + Verwaltung) = <b>{x} CHF</b> (Ø {m} CHF/Mt., vor Steuern). Amortisiert: {a} CHF."],
+pu_rent_col:["Loyers nets","Net rent","Nettomiete"],pu_cf_col:["Cash-flow / mois","Cash flow / month","Cashflow / Mt."],pu_cap_col:["vs capacité","vs capacity","vs. Kapazität"],
+
+c_bearer:["Répartition","Split","Aufteilung"],br_me:["Moi 100 %","Me 100%","Ich 100 %"],br_hh:["Ménage · ma part {p}","Household · my share {p}","Haushalt · mein Anteil {p}"],br_acc:["Selon alimentation · {p}","By funding · {p}","Nach Einzahlungen · {p}"],
+your_part:["ta part","your share","dein Anteil"],sum_myspend:["Ta part des dépenses","Your share of expenses","Dein Ausgabenanteil"],
+owed_t:["Frais partagés payés depuis tes comptes perso : ton/ta conjoint·e te doit","Shared costs paid from your personal accounts: your partner owes you","Geteilte Kosten von deinen Konten bezahlt: Partner/in schuldet dir"],owed_reimb:["Remboursement déjà prévu : {x} CHF/mois.","Reimbursement already planned: CHF {x}/month.","Rückzahlung bereits geplant: {x} CHF/Mt."],owed_none:["Aucun remboursement prévu dans tes revenus.","No reimbursement planned in your income.","Keine Rückzahlung im Einkommen geplant."],owed_btn:["Ajouter / mettre à jour le remboursement","Add / update reimbursement","Rückzahlung hinzufügen / anpassen"],
+my_part:["Ma part","My share","Mein Anteil"],partner_contrib:["Contribution conjoint·e","Partner contribution","Beitrag Partner/in"],reimb_label:["Remboursement conjoint·e (frais partagés)","Partner reimbursement (shared costs)","Rückzahlung Partner/in (geteilte Kosten)"],
+pf_split:["Clé de répartition du ménage","Household split key","Aufteilungsschlüssel Haushalt"],split_50:["50 / 50","50 / 50","50 / 50"],split_income:["Au prorata des revenus nets","Pro rata net income","Im Verhältnis der Nettoeinkommen"],split_custom:["Personnalisée","Custom","Individuell"],
+pf_partner_net:["Revenu net mensuel du/de la conjoint·e","Partner's net monthly income","Nettoeinkommen Partner/in pro Monat"],pf_split_pct:["Ma part (%)","My share (%)","Mein Anteil (%)"],
+ch_owed:["{x} CHF/mois de frais partagés non remboursés","CHF {x}/month of shared costs not reimbursed","{x} CHF/Mt. geteilte Kosten nicht zurückbezahlt"],ch_owed_d:["Des frais du ménage sont payés depuis ton compte perso. Ajoute le remboursement dans Budget.","Household costs are paid from your personal account. Add the reimbursement under Budget.","Haushaltskosten laufen über dein Privatkonto. Rückzahlung im Budget erfassen."],
+ch_fund:["« {n} » manque de {x} CHF/mois","“{n}” is short by CHF {x}/month","«{n}» fehlen {x} CHF/Mt."],
+fund_title:["Comptes communs : qui alimente quoi","Joint accounts: who funds what","Gemeinschaftskonten: wer zahlt was ein"],
+fund_note:["Pour chaque compte commun (ménage, voiture, vacances…), indique ce que toi et ton/ta conjoint·e versez chaque mois. Les frais payés depuis ce compte sont alors répartis selon ces versements (option « Selon alimentation » dans la colonne Répartition).","For each joint account (household, car, holidays…), enter what you and your partner pay in each month. Costs paid from it are then split by these payments (“By funding” in the Split column).","Erfasse pro Gemeinschaftskonto (Haushalt, Auto, Ferien…), was du und Partner/in monatlich einzahlen. Kosten ab diesem Konto werden danach aufgeteilt («Nach Einzahlungen» in der Spalte Aufteilung)."],
+c_fund_me:["Moi / mois","Me / month","Ich / Mt."],c_fund_pt:["Conjoint·e / mois","Partner / month","Partner/in / Mt."],c_fund_out:["Frais payés / mois","Costs paid / month","Bezahlte Kosten / Mt."],c_fund_net:["Solde / mois","Balance / month","Saldo / Mt."],c_fund_share:["Ma part","My share","Mein Anteil"],
 g_overview:["Vue d'ensemble","Overview","Übersicht"],g_budget:["Budget","Budget","Budget"],g_optimize:["Optimiser","Optimise","Optimieren"],g_market:["Marchés & IA","Markets & AI","Märkte & KI"],
 tab_profile:["Profil & lieux","Profile & places","Profil & Orte"],tab_purchase:["Achat immobilier","Buying a home","Eigenheimkauf"],
 pf_household:["Ménage","Household","Haushalt"],pf_commute:["Trajet domicile–travail","Commute","Arbeitsweg"],pf_home:["Domicile","Residence","Wohnort"],pf_work:["Lieu de travail","Workplace","Arbeitsort"],
@@ -884,11 +972,12 @@ const ym = (y,m) => `${y}-${String(m).padStart(2,"0")}`;
 function EXAMPLE(){
   return {v:2,
   settings:{lang:(S&&S.settings&&S.settings.lang)||"fr",theme:(S&&S.settings&&S.settings.theme)||null},
-  profile:{canton:"VD",situation:"couple",kids:0,age:34,lpp:true,activityIncome:0,marginal:30,taxAnnual:9600,p3aRateAcc:0.5,p3aRateSec:4,hhGross:190000,lppBuy:0,
+  profile:{splitMode:"50",splitPct:50,partnerNet:5200,canton:"VD",situation:"couple",kids:0,age:34,lpp:true,activityIncome:0,marginal:30,taxAnnual:9600,p3aRateAcc:0.5,p3aRateSec:4,hhGross:190000,lppBuy:0,
     home:{npa:"1009",muni:"1312"},work:{npa:"1003",muni:"210"},commute:{km:6,mode:"pt",tp:780,days:220,meals:"1"}},
   accounts:[
     {id:"a_me",name:"Compte privé",type:"current",shared:false,balance:1800},
     {id:"a_joint",name:"Compte commun",type:"current",shared:true,balance:2500},
+    {id:"a_car",name:"Compte voiture",type:"current",shared:true,balance:1200},
     {id:"a_sav",name:"Épargne de sécurité",type:"savings",shared:false,balance:15000},
     {id:"a_sav2",name:"Épargne projets",type:"savings",shared:false,balance:3000},
     {id:"a_3a",name:"3a titres",type:"p3a",shared:false,balance:22000,strategy:"high",ret:4},
@@ -908,9 +997,11 @@ function EXAMPLE(){
   incomes:[
     {id:uid(),label:"Salaire net",amount:6200,freq:"m",month:1,account:"a_me"},
     {id:uid(),label:"13e salaire",amount:6200,freq:"a",month:12,account:"a_me"},
-    {id:uid(),label:"Contribution partenaire",amount:1650,freq:"m",month:1,account:"a_joint"}],
+    {id:uid(),label:"Contribution conjoint·e",amount:1650,freq:"m",month:1,account:"a_joint",partner:true},
+    {id:uid(),label:"Contribution conjoint·e (voiture)",amount:380,freq:"m",month:1,account:"a_car",partner:true}],
   transfers:[
     {id:uid(),label:"Ma contribution commune",from:"a_me",to:"a_joint",amount:1650,freq:"m",month:1},
+    {id:uid(),label:"Ma part voiture",from:"a_me",to:"a_car",amount:380,freq:"m",month:1},
     {id:uid(),label:"Épargne automatique",from:"a_me",to:"a_sav",amount:300,freq:"m",month:1},
     {id:uid(),label:"Versement 3a titres",from:"a_me",to:"a_3a",amount:405,freq:"m",month:1},
     {id:uid(),label:"Versement 3a compte",from:"a_me",to:"a_3a2",amount:200,freq:"m",month:1},
@@ -926,15 +1017,15 @@ function EXAMPLE(){
     {id:uid(),label:"Vacances",cat:"leisure",amount:5000,freq:"a",month:7,account:"a_joint"},
     {id:uid(),label:"Dentiste",cat:"health",amount:600,freq:"o",month:3,account:"a_me"},
     {id:uid(),label:"Frais médicaux (franchise, quote-part)",cat:"health",amount:900,freq:"a",month:3,account:"a_me"},
-    {id:uid(),label:"Leasing voiture",cat:"car",amount:380,freq:"m",month:1,account:"a_me"},
-    {id:uid(),label:"Essence & parking",cat:"car",amount:180,freq:"m",month:1,account:"a_me"},
+    {id:uid(),label:"Leasing voiture",cat:"car",amount:380,freq:"m",month:1,account:"a_car"},
+    {id:uid(),label:"Essence & parking",cat:"car",amount:180,freq:"m",month:1,account:"a_car"},
     {id:uid(),label:"Mobile",cat:"telecom",amount:40,freq:"m",month:1,account:"a_me"},
     {id:uid(),label:"Acomptes impôts",cat:"taxes",amount:650,freq:"m",month:1,account:"a_me"},
     {id:uid(),label:"Sorties & loisirs",cat:"leisure",amount:400,freq:"m",month:1,account:"a_me"},
     {id:uid(),label:"Streaming & fitness",cat:"leisure",amount:95,freq:"m",month:1,account:"a_me"},
     {id:uid(),label:"Repas de midi",cat:"food",amount:250,freq:"m",month:1,account:"a_me"},
     {id:uid(),label:"Habits & shopping",cat:"shopping",amount:150,freq:"m",month:1,account:"a_me"},
-    {id:uid(),label:"Cadeaux & fêtes",cat:"other",amount:800,freq:"a",month:12,account:"a_me"}],
+    {id:uid(),label:"Cadeaux & fêtes",cat:"other",amount:800,freq:"a",month:12,account:"a_me",bearer:"hh"}],
   journal:[
     {id:uid(),date:ym(CY,CM+1)+"-02",label:"Migros",cat:"food",amount:86.4,account:"a_joint"},
     {id:uid(),date:ym(CY,CM+1)+"-05",label:"Pharmacie",cat:"health",amount:42.9,account:"a_me"},
@@ -944,8 +1035,9 @@ function EXAMPLE(){
     {id:uid(),type:"lamal",insurer:"",product:"Modèle médecin de famille",premium:443,freq:"m",franchise:2000,end:ym(CY,12)+"-31",notice:1,account:"a_me"},
     {id:uid(),type:"lca",insurer:"",product:"Hospitalisation demi-privée",premium:38,freq:"m",franchise:0,end:ym(CY,12)+"-31",notice:3,account:"a_me"},
     {id:uid(),type:"household",insurer:"",product:"Ménage 80 000 + RC 5 Mio",premium:450,freq:"a",end:ym(CY+1,1)+"-31",notice:3,franchise:200,account:"a_joint"},
-    {id:uid(),type:"car",insurer:"",product:"Casco complète",premium:1100,freq:"a",end:ym(CY+1,2)+"-28",notice:3,franchise:500,account:"a_me"}],
-  purchase:{price:680000,canton:"",fee:null,rateMode:"10",rate:1.84,years:20,maint:1,use:{sav:true,sec:true,p3a:true,lpp:true},lpp:40000,gift:100000},
+    {id:uid(),type:"car",insurer:"",product:"Casco complète",premium:1100,freq:"a",end:ym(CY+1,2)+"-28",notice:3,franchise:500,account:"a_car"}],
+  purchase:{mode:"own",price:680000,canton:"",fee:null,rateMode:"10",rate:1.84,years:20,maint:1,use:{sav:true,sec:true,p3a:true,lpp:true},lpp:40000,gift:100000,rent:2400,vac:3,mgmt:5},
+  cobuyers:[{id:uid(),name:"Partenaire",share:50,cash:60000,lpp:30000,income:85000}],
   lamal:{expected:900,primes:{300:540,500:529,1000:501,1500:472,2000:443,2500:415}},
   salary:{gross:7300,n:13,laa:1.2,ijm:0.5,lpp:null,other:0,source:0},
   family:{kids:1,daily:130,days:3,weeks:47,sub:20,alloc:215,allocKids:1,drop:20,net100:6200},
@@ -954,7 +1046,7 @@ function EXAMPLE(){
     {id:uid(),label:"Voyage Japon",target:8000,saved:1500,date:ym(CY+1,9),account:"a_sav2"}]
   };
 }
-function EMPTY(){ const e=EXAMPLE(); return {...e,accounts:[{id:"a_me",name:"Compte courant",type:"current",shared:false,balance:0}],assets:[],liabilities:[],incomes:[],transfers:[],expenses:[],journal:[],goals:[],policies:[],valuables:[],
+function EMPTY(){ const e=EXAMPLE(); return {...e,accounts:[{id:"a_me",name:"Compte courant",type:"current",shared:false,balance:0}],assets:[],liabilities:[],incomes:[],transfers:[],expenses:[],journal:[],goals:[],policies:[],valuables:[],cobuyers:[],
   profile:{...e.profile,taxAnnual:0,hhGross:0,home:{npa:"",muni:""},work:{npa:"",muni:""},commute:{km:0,mode:"pt",tp:0,days:220,meals:"0"}},lamal:{expected:500,primes:{300:0,500:0,1000:0,1500:0,2000:0,2500:0}}}; }
 
 let S = null; S = EXAMPLE();
@@ -972,6 +1064,7 @@ function applyI18n(){
   document.getElementById("jLabel").placeholder=t("j_label_ph");
   document.getElementById("aiQ").placeholder=t("coach_ph");
   document.querySelectorAll("#langSeg button").forEach(b=>b.classList.toggle("on",b.dataset.lang===S.settings.lang));
+  const at=document.querySelector("nav button[data-tab].active"); if(at) document.getElementById("curTab").textContent=at.textContent;
   if(typeof STATUS!=="undefined") document.getElementById("saveTxt").textContent=t(STATUS.key);
 }
 function applyTheme(){
@@ -1001,6 +1094,9 @@ function inMonth(it,m){ // m calendar month 0..11
   return 0;
 }
 const acc = id => S.accounts.find(a=>a.id===id);
+function hhKey(c){ const P=S.profile, m=P.splitMode||"50"; if(m==="custom") return Math.min(1,Math.max(0,num(P.splitPct)/100)); if(m==="income"){ const mine=c?c.incMe:0, pt=num(P.partnerNet); return mine+pt>0?mine/(mine+pt):0.5; } return 0.5; }
+function bearerOf(e){ return e.bearer || (isShared(e.account)?"acc":"me"); }
+function expShare(e,c){ const b=bearerOf(e); if(b==="me") return 1; if(b==="hh") return c.hhKey; if(b==="acc") return isShared(e.account)&&c.accFund[e.account]?c.accFund[e.account].share:1; return 1; }
 const isShared = id => !!(acc(id)&&acc(id).shared);
 const accType = id => acc(id)?acc(id).type:"current";
 
@@ -1015,8 +1111,15 @@ function calc(){
   S.expenses.forEach(e=>{ const tgt=isShared(e.account)?c.byCatC:c.byCatP; tgt[e.cat]=(tgt[e.cat]||0)+monthly(e); });
   c.persoExp = Object.values(c.byCatP).reduce((a,b)=>a+b,0);
   c.commonExp = Object.values(c.byCatC).reduce((a,b)=>a+b,0);
-  c.byCat={}; CATS.forEach(k=>c.byCat[k]=c.byCatP[k]+c.byCatC[k]*c.myShare);
-  c.mySpend = c.persoExp + c.commonExp*c.myShare;
+  c.hhKey = hhKey(c);
+  c.accFund = {}; S.accounts.filter(a=>a.shared).forEach(a=>{ const me=S.transfers.filter(x=>x.to===a.id&&!isShared(x.from)).reduce((s,x)=>s+monthly(x),0); const other=S.incomes.filter(i=>i.account===a.id).reduce((s,i)=>s+monthly(i),0)+S.transfers.filter(x=>x.to===a.id&&isShared(x.from)).reduce((s,x)=>s+monthly(x),0);
+    const out=S.expenses.filter(e=>e.account===a.id).reduce((s,e)=>s+monthly(e),0)+S.transfers.filter(x=>x.from===a.id).reduce((s,x)=>s+monthly(x),0);
+    c.accFund[a.id]={me,other,out,net:me+other-out,share:(me+other)>0?me/(me+other):c.hhKey}; });
+  c.byCat={}; c.myCatP={}; c.myCatC={}; CATS.forEach(k=>{c.byCat[k]=0;c.myCatP[k]=0;c.myCatC[k]=0;});
+  c.owed=0; c.share={};
+  S.expenses.forEach(e=>{ const sh=expShare(e,c); c.share[e.id]=sh; const m=monthly(e)*sh; c.byCat[e.cat]+=m; (isShared(e.account)?c.myCatC:c.myCatP)[e.cat]+=m; if(!isShared(e.account)) c.owed+=monthly(e)*(1-sh); });
+  c.mySpend = Object.values(c.byCat).reduce((a,b)=>a+b,0);
+  c.reimb = S.incomes.filter(i=>i.reimb).reduce((s,i)=>s+monthly(i),0);
   c.saving = S.transfers.filter(x=>!isShared(x.from)&&SAVING_TYPES.includes(accType(x.to))&&accType(x.from)!==accType(x.to)).reduce((a,x)=>a+monthly(x),0);
   const outFromPersoCurrent = S.transfers.filter(x=>!isShared(x.from)&&!SAVING_TYPES.includes(accType(x.from))).reduce((a,x)=>a+monthly(x),0);
   const inToPersoCurrent = S.transfers.filter(x=>!isShared(x.to)&&!SAVING_TYPES.includes(accType(x.to))).reduce((a,x)=>a+monthly(x),0);
@@ -1042,7 +1145,7 @@ function calc(){
   c.mortRate = c.mortTotal>0 ? c.mortgages.reduce((s,l)=>s+num(l.balance)*num(l.rate),0)/c.mortTotal : 0;
   c.mortNext = c.mortgages.map(l=>l.end).filter(Boolean).sort()[0]||null;
   c.cushion = c.mySpend>0 ? c.liquid/c.mySpend : 0;
-  c.taxProv = c.byCatP.taxes + c.byCatC.taxes*c.myShare;
+  c.taxProv = c.byCat.taxes;
   // cash-flow per account over 12 months starting this month
   c.months = []; for(let k=0;k<12;k++) c.months.push((CM+k)%12);
   c.series = {};
@@ -1101,7 +1204,9 @@ function checks(c){
   if(c.unalloc<0) add("bad",t("ch_def",{x:chf(-c.unalloc)}),t("ch_def_d"));
   else if(c.unalloc>200) add("warn",t("ch_unalloc",{x:chf(c.unalloc)}),t("ch_unalloc_d"));
   else add("good",t("ch_alloc"),t("ch_alloc_d"));
-  if(S.accounts.some(a=>a.shared) && c.commonBal < -20) add("bad",t("ch_common",{x:chf(-c.commonBal)}),t("ch_common_d"));
+  if(c.owed-c.reimb>20) add("warn",t("ch_owed",{x:chf(c.owed-c.reimb)}),t("ch_owed_d"));
+  Object.entries(c.accFund||{}).forEach(([id,f])=>{ if(f.net<-20) add("bad",t("ch_fund",{n:esc(acc(id).name),x:chf(-f.net)}),t("ch_common_d")); });
+  if(false && S.accounts.some(a=>a.shared) && c.commonBal < -20) add("bad",t("ch_common",{x:chf(-c.commonBal)}),t("ch_common_d"));
   if(c.incMe>0){ const p=pct(c.housing); if(c.housing<=0.3) add("good",t("ch_house",{p}),t("ch_house_g")); else if(c.housing<=0.35) add("warn",t("ch_house",{p}),t("ch_house_w")); else add("bad",t("ch_house",{p}),t("ch_house_b")); }
   if(c.carShare>0.12) add("warn",t("ch_car",{p:pct(c.carShare)}),t("ch_car_d"));
   const x3=chf(c.mySpend*3);
@@ -1163,7 +1268,7 @@ function renderDash(c){
     kpi(t("k_savings_total"),chf(c.savTotal),t("k_savings_total_h"))+
     kpi(t("k_mortgage"),mort,mortH)+
     (S.accounts.some(a=>a.shared)?kpi(t("k_common"),chf(c.commonBal),t("k_common_h"),c.commonBal<-20?"neg":"pos"):kpi(t("sum_perso"),chf(c.persoExp),""));
-  const rows=CATS.map(k=>({k,p:c.byCatP[k],s:c.byCatC[k]*c.myShare})).filter(r=>r.p+r.s>0).sort((a,b)=>(b.p+b.s)-(a.p+a.s));
+  const rows=CATS.map(k=>({k,p:c.myCatP[k],s:c.myCatC[k]})).filter(r=>r.p+r.s>0).sort((a,b)=>(b.p+b.s)-(a.p+a.s));
   const max=Math.max(1,...rows.map(r=>r.p+r.s));
   document.getElementById("catBars").innerHTML = rows.map(r=>`<div class="bar-row"><div>${L(CAT_LABELS,r.k)}</div><div class="track"><div class="fill" style="width:${r.p/max*100}%;background:${CAT_COLORS[r.k]}"></div><div class="fill" style="width:${r.s/max*100}%;background:${CAT_COLORS[r.k]};opacity:.45"></div></div><div class="num" style="text-align:right">${chf(r.p+r.s)} <span class="note">${c.incMe>0?Math.round((r.p+r.s)/c.incMe*100)+"%":""}</span></div></div>`).join("")||`<p class="note">–</p>`;
   document.getElementById("dashAccounts").innerHTML = wealthBlock(c,true);
@@ -1183,6 +1288,7 @@ function renderBudgetTables(){
     <td><div class="row" style="flex-wrap:nowrap;gap:6px"><input class="w-lbl" data-k="label" value="${esc(e.label)}" ${lk}>${e.policy?`<span class="pill gold">${t("synced")}</span>`:""}</div></td>
     <td><select class="w-cat" data-k="cat">${opts(CAT_LABELS,e.cat)}</select></td>
     <td><select class="w-acc" data-k="account">${accOpts(e.account)}</select></td>
+    <td><select data-k="bearer" style="width:150px">${bearerOpts(e)}</select></td>
     <td><input class="amt w-amt" type="number" step="5" data-k="amount" value="${e.amount}" ${lk}></td>
     <td><select class="w-freq" data-k="freq" ${lk}>${opts(FREQ_LABELS,e.freq)}</select></td>
     <td class="when-td"><div class="when">${whenCell(e)}</div></td>
@@ -1202,14 +1308,25 @@ function renderBudgetTables(){
     <td class="when-td"><div class="when">${whenCell(e)}</div></td><td>${del}</td></tr>`).join("");
   document.querySelectorAll("#expFilter button").forEach(b=>b.classList.toggle("on",b.dataset.f===UI.filter));
 }
+function bearerOpts(e){ const b=bearerOf(e), cc=calc(); const o=[["me",t("br_me")],["hh",t("br_hh",{p:pct(cc.hhKey)})]]; if(isShared(e.account)) o.push(["acc",t("br_acc",{p:pct(cc.accFund[e.account]?cc.accFund[e.account].share:cc.hhKey)})]); return o.map(([k,l])=>`<option value="${k}" ${k===b?"selected":""}>${l}</option>`).join(""); }
 function renderBudgetTotals(c){
-  document.querySelectorAll("#expBody tr").forEach(tr=>{const e=S.expenses.find(x=>x.id===tr.dataset.id); if(e) tr.querySelector("[data-mon]").textContent=chf(monthly(e));});
+  document.querySelectorAll("#expBody tr").forEach(tr=>{const e=S.expenses.find(x=>x.id===tr.dataset.id); if(!e) return; const sh=c.share[e.id]??1; tr.querySelector("[data-mon]").innerHTML=chf(monthly(e))+(sh<0.999?`<div class="note small">${t("your_part")} ${chf(monthly(e)*sh)}</div>`:""); });
+  renderFunding(c);
   const f=UI.filter; const tot = f==="perso"?c.persoExp:f==="common"?c.commonExp:c.persoExp+c.commonExp;
   document.getElementById("expTot").innerHTML="<b>"+chf(tot)+"</b>";
   document.getElementById("incTot").innerHTML="<b>"+chf(c.incMe)+"</b>";
-  document.getElementById("expSummary").innerHTML = `<div><span>${t("sum_perso")}</span><b>${chf(c.persoExp)}</b></div><div><span>${t("sum_common")}</span><b>${chf(c.commonExp)}</b></div><div><span>${t("sum_common_in")}</span><b class="${c.commonBal<-20?"neg":""}">${chf(c.commonIn)}</b></div><div><span>${t("sum_share")}</span><b>${pct(c.myShare)} · ${chf(c.commonExp*c.myShare)}</b></div>`;
+  document.getElementById("expSummary").innerHTML = `<div><span>${t("sum_perso")}</span><b>${chf(c.persoExp)}</b></div><div><span>${t("sum_common")}</span><b>${chf(c.commonExp)}</b></div><div><span>${t("sum_common_in")}</span><b class="${c.commonBal<-20?"neg":""}">${chf(c.commonIn)}</b></div><div><span>${t("sum_myspend")}</span><b>${chf(c.mySpend)}</b></div>`+
+    (c.owed>1?`<div style="grid-column:1/-1;background:var(--orange-soft);border-color:var(--orange)"><span>${t("owed_t")}</span><b>${chf(c.owed)} ${t("c_permonth")}</b><span>${c.reimb>0?t("owed_reimb",{x:chf(c.reimb)}):t("owed_none")}</span> <button class="btn small" id="addReimb">${t("owed_btn")}</button></div>`:"");
 }
 
+function renderFunding(c){
+  const el=document.getElementById("fundBody"); if(!el) return; const sh=S.accounts.filter(a=>a.shared);
+  document.getElementById("fundCard").style.display=sh.length?"":"none";
+  const ae=document.activeElement, editing=ae&&(ae.dataset.fundMe||ae.dataset.fundPt);
+  if(!editing) el.innerHTML = sh.map(a=>{ const f=c.accFund[a.id]; return `<tr data-fund="${a.id}"><td><b>${esc(a.name)}</b></td><td><input class="amt" type="number" step="10" data-fund-me="${a.id}" value="${Math.round(f.me)}" style="width:100px"></td><td><input class="amt" type="number" step="10" data-fund-pt="${a.id}" value="${Math.round(f.other)}" style="width:100px"></td><td class="num" data-fo></td><td class="num" data-fn></td><td class="num" data-fs></td></tr>`; }).join("");
+  sh.forEach(a=>{ const f=c.accFund[a.id], tr=el.querySelector(`tr[data-fund="${a.id}"]`); if(!tr) return; const lv=f.net>=0?"g":f.net>-100?"o":"r";
+    tr.querySelector("[data-fo]").textContent=chf(f.out); tr.querySelector("[data-fn]").innerHTML=`<span class="light ${lv}" style="width:10px;height:10px;vertical-align:-1px"></span> <b class="${f.net<0?"neg":"pos"}">${f.net>=0?"+":""}${chf(f.net)}</b>`; tr.querySelector("[data-fs]").textContent=pct(f.share); });
+}
 // ================= render: journal =================
 function renderJournal(){
   document.getElementById("jCat").innerHTML = opts(CAT_LABELS,"food");
@@ -1468,7 +1585,7 @@ function aiPayload(c){
     domicile:muniName(S.profile.home.muni),travail:muniName(S.profile.work.muni),trajet:S.profile.commute,
     estimation_impots:(()=>{const x=taxCalc(c);return x.ok?{total:Math.round(x.total),taux_marginal:Math.round(x.marg*100)+"%",deductions:x.ded.map(d=>[d[0],Math.round(d[1])]),commune_travail:x.work?Math.round(x.work):null,communes_moins_cheres:x.cheap.slice(0,3).map(z=>[z.n,Math.round(z.v)])}:null;})(),
     assurances:S.policies.map(p=>({type:POL_TYPES[p.type]?POL_TYPES[p.type][0]:p.type,assureur:p.insurer,prime_an:Math.round(num(p.premium)*(p.freq==="m"?12:p.freq==="q"?4:p.freq==="s"?2:1)),franchise:num(p.franchise),resilier_avant:(policyDeadline(p)||{}).by?fmtD(policyDeadline(p).by):null})),
-    projet_achat:(()=>{const x=purchaseCalc(c);return {prix:x.P,hypotheque:Math.round(x.M),fonds_propres:Math.round(x.eqPrice),tenue_charges:Math.round(x.tenab*100)+"%",cout_mensuel:Math.round(x.monthly)};})(),
+    projet_achat:(()=>{const x=purchaseCalc(c);return {type:x.mode,faisabilite:{g:'vert',o:'orange',r:'rouge'}[x.overall],points:x.ck.map(k=>[I[k.k]?I[k.k][0]:k.k,k.l,k.v]),prix:x.P,hypotheque:Math.round(x.M),fonds_propres:Math.round(x.eqPrice),tenue_charges:Math.round(x.tenab*100)+"%",cout_mensuel:Math.round(x.monthly)};})(),
     point_bas_tresorerie:c.worst?{compte:c.worst.acc.name,mois:MONTHS_L.fr[c.months[c.worst.k]],solde:Math.round(c.worst.v)}:null};
 }
 
@@ -1492,7 +1609,9 @@ function renderProfileForm(){
   fillMuniList(); const P=S.profile, C=P.commute;
   document.getElementById("pfHousehold").innerHTML = selField(t("pf_situation"),"profile.situation",{single:t("st_single"),couple:t("st_couple"),married:t("st_married")},P.situation)+
     field(t("pf_kids"),"profile.kids",P.kids,'step="1" min="0"')+field(t("sal_age"),"profile.age",P.age)+field(t("pf_hh"),"profile.hhGross",P.hhGross,'step="1000"')+field(t("pf_lppbuy"),"profile.lppBuy",P.lppBuy,'step="1000"')+
-    `<div class="field"><label>${t("pf_joint")}</label><select data-path="profile.hasJoint" data-bool="1"><option value="1" ${S.accounts.some(a=>a.shared)?"selected":""}>${t("yes")}</option><option value="0" ${!S.accounts.some(a=>a.shared)?"selected":""}>${t("no")}</option></select><span class="note">${t("pf_joint_note")}</span></div>`;
+    `<div class="field"><label>${t("pf_joint")}</label><select data-path="profile.hasJoint" data-bool="1"><option value="1" ${S.accounts.some(a=>a.shared)?"selected":""}>${t("yes")}</option><option value="0" ${!S.accounts.some(a=>a.shared)?"selected":""}>${t("no")}</option></select><span class="note">${t("pf_joint_note")}</span></div>`+
+    selField(t("pf_split"),"profile.splitMode",{"50":t("split_50"),income:t("split_income"),custom:t("split_custom")},P.splitMode||"50")+
+    (P.splitMode==="income"?field(t("pf_partner_net"),"profile.partnerNet",P.partnerNet,'step="100"'):"")+(P.splitMode==="custom"?field(t("pf_split_pct"),"profile.splitPct",P.splitPct,'step="5" min="0" max="100"'):"");
   document.getElementById("pfHome").innerHTML = locFields("home");
   document.getElementById("pfWork").innerHTML = locFields("work");
   document.getElementById("pfCommute").innerHTML = selField(t("pf_mode"),"profile.commute.mode",{car:t("m_car"),pt:t("m_pt"),bike:t("m_bike"),none:t("m_none")},C.mode)+
@@ -1601,36 +1720,69 @@ function renderPolicyCalc(){
 
 // ================= purchase simulator =================
 const FEES = {ZG:0.6,ZH:0.4,AG:1.2,SG:1.9,BE:2.6,VS:2.8,LU:2.4,TI:2.5,BS:3.7,GE:4.5,JU:4.5,FR:4.7,VD:5.0,NE:5.0};
-function purchaseCalc(c){
-  c=c||calc(); const U=S.purchase, P=num(U.price), kt=U.canton||S.profile.canton||"VD";
+const lvl = (v,g,o,higher=true) => higher ? (v>=g?"g":v>=o?"o":"r") : (v<=g?"g":v<=o?"o":"r");
+const worst = arr => arr.includes("r")?"r":arr.includes("o")?"o":"g";
+function purchaseCalc(c,modeOverride){
+  c=c||calc(); const U=S.purchase, mode=modeOverride||U.mode||"own", P=num(U.price), kt=U.canton||S.profile.canton||"VD";
   const feePct = (U.fee===null||U.fee===""||U.fee===undefined) ? (FEES[kt]??2.5) : num(U.fee);
   const F=P*feePct/100;
   const bal=type=>S.accounts.filter(a=>a.type===type).reduce((s,a)=>s+num(a.balance),0);
   const cushion=c.mySpend*3, lppAsset=S.assets.filter(a=>a.type==="pension").reduce((s,a)=>s+num(a.value),0);
+  const inv=mode==="invest";
   const src=[
     {k:"sav",l:t("pu_sav"),avail:Math.max(0,bal("savings")-cushion)},
-    {k:"sec",l:t("pu_sec"),avail:bal("securities")},
-    {k:"p3a",l:t("pu_3a"),avail:bal("p3a")},
-    {k:"lpp",l:t("pu_lpp"),avail:lppAsset,edit:"purchase.lpp"},
+    {k:"sec",l:t("pu_sec"),avail:bal("securities")+bal("crypto")},
+    {k:"p3a",l:t("pu_3a"),avail:inv?0:bal("p3a"),off:inv},
+    {k:"lpp",l:t("pu_lpp"),avail:inv?0:lppAsset,edit:"purchase.lpp",off:inv},
     {k:"gift",l:t("pu_gift"),avail:null,edit:"purchase.gift"}];
-  src.forEach(s=>{ if(s.k==="gift") s.used=num(U.gift); else if(s.k==="lpp") s.used=U.use.lpp?Math.min(num(U.lpp)||lppAsset,lppAsset):0; else s.used=U.use[s.k]?s.avail:0; });
-  const lppUsed=src.find(s=>s.k==="lpp").used, total=src.reduce((a,s)=>a+s.used,0), cash=total-lppUsed;
+  src.forEach(s=>{ if(s.off) s.used=0; else if(s.k==="gift") s.used=num(U.gift); else if(s.k==="lpp") s.used=U.use.lpp?Math.min(num(U.lpp)||lppAsset,lppAsset):0; else s.used=U.use[s.k]?s.avail:0; });
+  const co = mode==="co" ? (S.cobuyers||[]) : [];
+  const myLpp=src.find(s=>s.k==="lpp").used, myTotal=src.reduce((a,s)=>a+s.used,0);
+  const coCash=co.reduce((a,b)=>a+num(b.cash),0), coLpp=inv?0:co.reduce((a,b)=>a+num(b.lpp),0), coInc=co.reduce((a,b)=>a+num(b.income),0);
+  const total=myTotal+coCash+coLpp, lppUsed=myLpp+coLpp, cash=total-lppUsed;
   const eqPrice=Math.max(0,Math.min(P,total-F)), M=Math.max(0,P-eqPrice), hard=Math.max(0,cash-F);
-  const rateMode=U.rateMode; const mk=MARKET.mortgages.find(r=>String(r.y)===rateMode);
-  const rate = rateMode==="custom" ? num(U.rate) : (mk?mk.avg:num(U.rate));
+  const mk=MARKET.mortgages.find(r=>String(r.y)===U.rateMode); const rate=U.rateMode==="custom"?num(U.rate):(mk?mk.avg:num(U.rate));
   const r1=Math.min(M,P*2/3), r2=Math.max(0,M-r1); const ay=Math.max(1,Math.min(15,65-num(S.profile.age))); const amortY=r2/ay;
-  const maint=P*num(U.maint)/100;
-  const Y1int=M*rate/100, monthly=(Y1int+amortY+maint)/12;
-  const tenab = num(S.profile.hhGross)>0 ? (M*0.05+amortY+P*0.01)/num(S.profile.hhGross) : 0;
-  const N=Math.max(1,Math.min(40,num(U.years)||20)); let b=M, ci=0, ca=0; const rows=[], sb=[M], si=[0], sa=[0];
-  for(let y=1;y<=N;y++){ const i=b*rate/100, a=Math.min(amortY,Math.max(0,b-P*2/3)); b-=a; ci+=i; ca+=a; rows.push({y,i,a,m:maint,b}); sb.push(b); si.push(ci); sa.push(ca); }
-  const totalCost=F+ci+maint*N;
-  const housingNow=c.byCatP.housing+c.byCatC.housing;
-  const left = cushion + src.filter(s=>s.k!=="gift"&&s.k!=="lpp"&&!U.use[s.k]).reduce((a,s)=>a+s.avail,0) + Math.max(0,total-F-P);
-  return {P,kt,feePct,F,src,total,cash,lppUsed,eqPrice,M,hard,rate,r1,r2,ay,amortY,maint,Y1int,monthly,tenab,N,rows,sb,si,sa,ci,ca,totalCost,housingNow,left,cushion};
+  const maint=P*num(U.maint)/100, Y1int=M*rate/100;
+  const income=num(S.profile.hhGross)+coInc;
+  // rental
+  const rentY=inv?num(U.rent)*12*(1-num(U.vac)/100):0, mgmt=rentY*num(U.mgmt)/100;
+  const cfPre=(rentY-Y1int-maint-mgmt-amortY)/12;
+  const taxable=Math.max(0,rentY-Y1int-Math.max(maint,0.2*rentY)-mgmt), taxRent=taxable*num(S.profile.marginal)/100, cfPost=cfPre-taxRent/12;
+  const gross=P?num(U.rent)*12/P:0, net=P?(rentY-maint-mgmt)/P:0, roe=(total)?(rentY-Y1int-maint-mgmt)/total:0;
+  const tenab = income>0 ? Math.max(0,M*0.05+amortY+P*0.01-(inv?rentY*0.8:0))/income : 9;
+  const monthly=(Y1int+amortY+maint+mgmt)/12;
+  const housingNow=c.byCatP.housing+c.byCatC.housing, capacity=housingNow+Math.max(0,c.unalloc);
+  const left = cushion + src.filter(s=>["sav","sec","p3a"].includes(s.k)&&!s.off&&!U.use[s.k]).reduce((a,s)=>a+s.avail,0) + Math.max(0,total-F-P);
+  // ownership shares (co)
+  let buyers=[];
+  if(mode==="co"){ const coShare=co.reduce((a,b)=>a+num(b.share),0); const myShare=Math.max(0,100-coShare);
+    buyers=[{name:t("co_me"),share:myShare,eq:myTotal},...co.map(b=>({name:b.name||"—",share:num(b.share),eq:num(b.cash)+num(b.lpp)}))];
+    buyers.forEach(b=>{ b.eqShare= total?b.eq/total*100:0; b.gap=b.eqShare-b.share; b.cost=monthly*b.share/100; }); }
+  // checks
+  const ck=[];
+  const eqR=P?eqPrice/P:0;
+  ck.push({k:"k_eq",l:inv?lvl(eqR,0.25,0.20):lvl(eqR,0.20,0.15),v:pct(eqR),d:t(inv?"k_eq_d_inv":"k_eq_d_own")});
+  if(!inv) ck.push({k:"k_hard",l:hard>=P*0.1-1?"g":"r",v:chf(hard),d:"≥ "+chf(P*0.1)});
+  ck.push({k:"k_fees",l:cash>=F?"g":"r",v:chf(F),d:`${decS(feePct.toFixed(1))} % · ${kt}`});
+  ck.push({k:"k_tenab",l:lvl(tenab,0.33,0.38,false),v:pct(tenab),d:t("k_tenab_d")});
+  ck.push({k:"k_cush",l:lvl(c.mySpend?left/c.mySpend:9,3,1),v:chf(left),d:t("k_cush_d")});
+  if(inv){ ck.push({k:"k_gross",l:lvl(gross,0.04,0.03),v:pct(gross,2),d:t("k_gross_d")}); ck.push({k:"k_cf",l:lvl(cfPost,0,-300),v:chf(cfPost),d:t("k_cf_d")}); }
+  else { const myCost=mode==="co"?(buyers[0]?buyers[0].cost:monthly):monthly; ck.push({k:"k_budget",l:lvl(myCost/(capacity||1),1,1.2,false),v:chf(myCost),d:t("k_budget_d",{x:chf(capacity)})}); }
+  if(mode==="co"&&buyers.length>1){ const g=Math.max(...buyers.map(b=>Math.abs(b.gap))); ck.push({k:"k_coeq",l:lvl(g,5,15,false),v:decS(g.toFixed(0))+" pts",d:t("k_coeq_d")}); }
+  const overall=worst(ck.map(x=>x.l));
+  // projection
+  const N=Math.max(1,Math.min(40,num(U.years)||20)); let b=M, ci=0, ca=0; const rows=[], sb=[M], si=[0], sa=[0], scf=[0]; let ccf=0;
+  for(let y=1;y<=N;y++){ const i=b*rate/100, a=Math.min(amortY,Math.max(0,b-P*2/3)); b-=a; ci+=i; ca+=a;
+    const cf=inv?(rentY-i-maint-mgmt-a-Math.max(0,rentY-i-Math.max(maint,0.2*rentY)-mgmt)*num(S.profile.marginal)/100)/12:-(i+a+maint)/12; ccf+=cf*12;
+    const lv = inv? lvl(cf,0,-300) : lvl(((i+a+maint)/12)*(mode==="co"&&buyers[0]?buyers[0].share/100:1)/(capacity||1),1,1.2,false);
+    rows.push({y,i,a,m:maint,b,cf,lv}); sb.push(b); si.push(ci); sa.push(ca); scf.push(ccf); }
+  const totalCost=F+ci+maint*N+mgmt*N-(inv?rentY*N:0);
+  return {mode,P,kt,feePct,F,src,total,cash,lppUsed,eqPrice,M,hard,rate,r1,r2,ay,amortY,maint,mgmt,Y1int,monthly,tenab,N,rows,sb,si,sa,scf,ci,ca,totalCost,housingNow,capacity,left,cushion,income,rentY,cfPre,cfPost,taxRent,gross,net,roe,buyers,ck,overall};
 }
 function renderPurchaseForm(){
-  const U=S.purchase, kts=["AG","AI","AR","BE","BL","BS","FR","GE","GL","GR","JU","LU","NE","NW","OW","SG","SH","SO","SZ","TG","TI","UR","VD","VS","ZG","ZH"];
+  const U=S.purchase, mode=U.mode||"own", kts=["AG","AI","AR","BE","BL","BS","FR","GE","GL","GR","JU","LU","NE","NW","OW","SG","SH","SO","SZ","TG","TI","UR","VD","VS","ZG","ZH"];
+  document.querySelectorAll("#puMode button").forEach(b=>b.classList.toggle("on",b.dataset.pm===mode));
   const kt=U.canton||S.profile.canton||"VD";
   const rateOpts={}; MARKET.mortgages.forEach(r=>{ rateOpts[String(r.y)] = (r.y===0?"SARON":(S.settings.lang==="en"?`${r.y}-yr fixed`:S.settings.lang==="de"?`Fest ${r.y} J.`:`Fixe ${r.y} ans`))+` · ${decS(r.avg.toFixed(2))} %`; }); rateOpts.custom=t("pu_custom");
   document.getElementById("puForm").innerHTML = field(t("pu_price"),"purchase.price",U.price,'step="10000"')+
@@ -1638,33 +1790,44 @@ function renderPurchaseForm(){
     field(t("pu_fees")+` <span class="note">(${t("avg")} ${kt}: ${decS(String(FEES[kt]??2.5))} %)</span>`,"purchase.fee",U.fee,`step="0.1" placeholder="${decS(String(FEES[kt]??2.5))}"`)+
     selField(t("pu_rate"),"purchase.rateMode",rateOpts,U.rateMode)+(U.rateMode==="custom"?field(t("pu_ratev"),"purchase.rate",U.rate,'step="0.05"'):"")+
     field(t("pu_years"),"purchase.years",U.years,'step="1" min="1" max="40"')+field(t("pu_maint"),"purchase.maint",U.maint,'step="0.1"')+field(t("pf_hh"),"profile.hhGross",S.profile.hhGross,'step="1000"');
+  document.getElementById("puInvestBox").innerHTML = mode==="invest" ? `<h3 class="mt2">${t("pm_invest")}</h3><div class="grid g3">${field(t("inv_rent"),"purchase.rent",U.rent,'step="50"')+field(t("inv_vac"),"purchase.vac",U.vac,'step="0.5"')+field(t("inv_mgmt"),"purchase.mgmt",U.mgmt,'step="0.5"')}</div><div id="puInvOut" class="mt"></div><p class="note">${t("inv_note")}</p>` : "";
   const x=purchaseCalc();
-  document.getElementById("puEquityForm").innerHTML = `<table><thead><tr><th>${t("pu_use")}</th><th>${t("pu_src")}</th><th class="num">${t("pu_avail")}</th><th class="num">${t("pu_used")}</th></tr></thead><tbody>${x.src.map(s=>`<tr>
-    <td>${s.k==="gift"?"":`<input type="checkbox" data-path="purchase.use.${s.k}" ${U.use[s.k]?"checked":""}>`}</td><td>${s.l}</td><td class="num">${s.avail==null?"–":chf(s.avail)}</td>
-    <td class="num">${s.edit?`<input class="amt" type="number" step="1000" data-path="${s.edit}" value="${s.k==="lpp"?(U.lpp||""):U.gift}" placeholder="${s.k==="lpp"?chf(s.avail).replace(/'/g,""):"0"}" style="width:120px">`:`<span data-used="${s.k}"></span>`}</td></tr>`).join("")}</tbody></table>`;
+  document.getElementById("puEquityForm").innerHTML = `<table><thead><tr><th>${t("pu_use")}</th><th>${t("pu_src")}</th><th class="num">${t("pu_avail")}</th><th class="num">${t("pu_used")}</th></tr></thead><tbody>${x.src.map(s=>`<tr ${s.off?'style="opacity:.45"':""}>
+    <td>${s.k==="gift"?"":`<input type="checkbox" data-path="purchase.use.${s.k}" ${U.use[s.k]&&!s.off?"checked":""} ${s.off?"disabled":""}>`}</td><td>${s.l}</td><td class="num">${s.avail==null?"–":chf(s.avail)}</td>
+    <td class="num">${s.edit&&!s.off?`<input class="amt" type="number" step="1000" data-path="${s.edit}" value="${s.k==="lpp"?(U.lpp||""):U.gift}" placeholder="${s.k==="lpp"?chf(s.avail).replace(/'/g,""):"0"}" style="width:120px">`:`<span data-used="${s.k}"></span>`}</td></tr>`).join("")}</tbody></table>`;
+  document.getElementById("puCoBox").innerHTML = mode==="co" ? `<div class="row mt2"><h3 style="margin:0">${t("co_title")}</h3><span class="spacer"></span><button class="btn small" data-add="cobuyers">${t("co_add")}</button></div>
+    <div class="tbl-scroll"><table class="mt"><thead><tr><th>${t("co_name")}</th><th class="num">${t("co_share")}</th><th class="num">${t("co_cash")}</th><th class="num">${t("co_lpp")}</th><th class="num">${t("co_inc")}</th><th></th></tr></thead><tbody>${(S.cobuyers||[]).map(b=>`<tr data-list="cobuyers" data-id="${b.id}"><td><input data-k="name" value="${esc(b.name)}" style="min-width:120px"></td><td><input class="amt" type="number" step="5" data-k="share" value="${b.share}" style="width:80px"></td><td><input class="amt" type="number" step="1000" data-k="cash" value="${b.cash}" style="width:110px"></td><td><input class="amt" type="number" step="1000" data-k="lpp" value="${b.lpp}" style="width:110px"></td><td><input class="amt" type="number" step="1000" data-k="income" value="${b.income}" style="width:120px"></td><td>${del}</td></tr>`).join("")}</tbody></table></div><div id="puCoSplit" class="mt"></div><p class="note">${t("co_note")}</p>` : "";
 }
 function renderPurchase(c){
   const x=purchaseCalc(c);
-  document.querySelectorAll("[data-used]").forEach(el=>{ const s=x.src.find(z=>z.k===el.dataset.used); el.textContent=chf(s.used); });
+  document.querySelectorAll("[data-used]").forEach(el=>{ const s=x.src.find(z=>z.k===el.dataset.used); if(s) el.textContent=chf(s.used); });
+  document.getElementById("puVerdict").innerHTML = `<div class="verdict ${x.overall}"><span class="light ${x.overall}" style="width:22px;height:22px"></span><div><b style="font-size:16px">${t("v_"+x.overall)}</b><div class="note">${t("v_"+x.overall+"_d")}</div></div><span class="spacer"></span><div class="row" style="gap:6px">${x.ck.map(k=>`<span class="light ${k.l}" title="${t(k.k)}"></span>`).join("")}</div></div>`;
   document.getElementById("puEquity").innerHTML = `<div class="sum-box"><div><span>${t("pu_total_eq")}</span><b>${chf(x.total)}</b></div><div><span>${t("pu_fees_paid")} (${decS(x.feePct.toFixed(1))} %)</span><b>${chf(x.F)}</b></div><div><span>${t("pu_eq_price")}</span><b>${chf(x.eqPrice)} · ${pct(x.P?x.eqPrice/x.P:0)}</b></div><div><span>${t("pu_mort")}</span><b>${chf(x.M)} · ${pct(x.P?x.M/x.P:0)}</b></div></div>
     <p class="note mt">${t("pu_r1")} : <b>${chf(x.r1)}</b> · ${t("pu_r2")} : <b>${chf(x.r2)}</b> → ${chf(x.amortY)} ${t("per_year")} (${x.ay} ${S.settings.lang==="de"?"J.":S.settings.lang==="en"?"yrs":"ans"})</p>`;
-  const ck=(ok,lbl,d)=>`<div class="check ${ok?"good":"bad"}"><div class="ic">${ok?"✓":"✕"}</div><div><b>${lbl}</b><span>${d}</span></div></div>`;
-  document.getElementById("puChecks").innerHTML =
-    ck(x.eqPrice>=x.P*0.2-1,t("pu_ok_eq"),x.eqPrice>=x.P*0.2-1?pct(x.eqPrice/x.P):t("pu_short",{x:chf(x.P*0.2-x.eqPrice)}))+
-    ck(x.hard>=x.P*0.1-1,t("pu_ok_hard"),x.hard>=x.P*0.1-1?chf(x.hard):t("pu_short",{x:chf(x.P*0.1-x.hard)}))+
-    ck(x.cash>=x.F,t("pu_ok_fees"),chf(x.F))+
-    ck(x.tenab<=0.33,t("pu_ok_tenab"),t("pu_tenab_v",{p:pct(x.tenab)}));
+  const cls={g:"good",o:"warn",r:"bad"}, ic={g:"✓",o:"!",r:"✕"};
+  document.getElementById("puChecks").innerHTML = x.ck.map(k=>`<div class="check ${cls[k.l]}"><div class="ic">${ic[k.l]}</div><div><b>${t(k.k)} : ${k.v}</b><span>${k.d}</span></div></div>`).join("");
   document.getElementById("puCosts").innerHTML = `<table><tbody>
     <tr><td>${t("pu_interest")} (${decS(x.rate.toFixed(2))} %)</td><td class="num">${chf(x.Y1int/12)}</td><td class="num note">${chf(x.Y1int)} ${t("per_year")}</td></tr>
     <tr><td>${t("pu_amort")}</td><td class="num">${chf(x.amortY/12)}</td><td class="num note">${chf(x.amortY)} ${t("per_year")}</td></tr>
     <tr><td>${t("pu_upkeep")}</td><td class="num">${chf(x.maint/12)}</td><td class="num note">${chf(x.maint)} ${t("per_year")}</td></tr>
+    ${x.mode==="invest"?`<tr><td>${t("inv_mgmt").replace(/ \(.*\)/,"")}</td><td class="num">${chf(x.mgmt/12)}</td><td class="num note">${chf(x.mgmt)} ${t("per_year")}</td></tr>`:""}
     <tr><td><b>${t("pu_monthly")}</b></td><td class="num"><b>${chf(x.monthly)}</b></td><td></td></tr></tbody></table>
-    <p class="note mt">${t("pu_vs_rent",{x:chf(x.housingNow),d:(x.monthly-x.housingNow>=0?"+":"")+chf(x.monthly-x.housingNow)})}</p>
-    <div class="callout mt">${t("pu_left",{x:chf(x.left)})}</div>`;
+    ${x.mode!=="invest"?`<p class="note mt">${t("pu_vs_rent",{x:chf(x.housingNow),d:(x.monthly-x.housingNow>=0?"+":"")+chf(x.monthly-x.housingNow)})}</p>`:""}`;
+  const io=document.getElementById("puInvOut"); if(io) io.innerHTML=`<div class="callout">${t("inv_out",{g:pct(x.gross,2),n:pct(x.net,2),r:pct(x.roe,1),y:chf(x.rentY),cf:chf(x.cfPre),cft:chf(x.cfPost),tx:chf(x.taxRent)})}</div>`;
+  const cs=document.getElementById("puCoSplit"); if(cs) cs.innerHTML=`<table><thead><tr><th>${t("co_tbl")}</th><th class="num">${t("co_part_price")}</th><th class="num">${t("co_part_eq")}</th><th class="num">${t("co_gap")}</th><th class="num">${t("co_part_cost")}</th></tr></thead><tbody>${x.buyers.map(b=>`<tr><td><b>${esc(b.name)}</b></td><td class="num">${decS(b.share.toFixed(0))} %</td><td class="num">${decS(b.eqShare.toFixed(0))} % · ${chf(b.eq)}</td><td class="num"><span class="light ${lvl(Math.abs(b.gap),5,15,false)}" style="width:10px;height:10px;vertical-align:-1px"></span> ${b.gap>=0?"+":""}${decS(b.gap.toFixed(0))}</td><td class="num"><b>${chf(b.cost)}</b></td></tr>`).join("")}</tbody></table>`;
+  // compare the three modes
+  document.getElementById("puCompare").innerHTML = `<table><tbody>${["own","co","invest"].map(m=>{ const y=purchaseCalc(c,m); return `<tr ${m===x.mode?'style="background:var(--gold-soft)"':""}><td><span class="light ${y.overall}" style="width:12px;height:12px;vertical-align:-1px"></span> <b>${t("pm_"+m)}</b></td><td class="num">${pct(y.P?y.eqPrice/y.P:0)}</td><td class="num">${pct(y.tenab)}</td><td class="num">${m==="invest"?chf(y.cfPost)+" /m":chf(y.monthly)+" /m"}</td><td><button class="btn small" data-pm="${m}">→</button></td></tr>`; }).join("")}</tbody></table>`;
+  // chart + table
   const labels=x.sb.map((_,i)=>String(CY+i));
-  document.getElementById("puChart").innerHTML = lineChart([x.sb,x.si,x.sa],{labels,colors:["var(--gold)","var(--red)","var(--green)"],h:240,fmt:v=>Math.abs(v)>=1000?chf(v/1000)+"k":chf(v)});
-  document.getElementById("puTbl").innerHTML = `<thead><tr><th>${t("pu_year")}</th><th class="num">${t("pu_interest")}</th><th class="num">${t("pu_amort")}</th><th class="num">${t("pu_upkeep")}</th><th class="num">${t("pu_monthly")}</th><th class="num">${t("pu_balance")}</th></tr></thead><tbody>${x.rows.map(r=>`<tr><td>${CY+r.y}</td><td class="num">${chf(r.i)}</td><td class="num">${chf(r.a)}</td><td class="num">${chf(r.m)}</td><td class="num"><b>${chf((r.i+r.a+r.m)/12)}</b></td><td class="num">${chf(r.b)}</td></tr>`).join("")}</tbody>
-    <tfoot><tr><td colspan="6" class="note" style="padding-top:10px">${t("pu_total_cost",{n:x.N,x:chf(x.totalCost),m:chf(x.totalCost/x.N/12),a:chf(x.ca)})}</td></tr></tfoot>`;
+  if(x.mode==="invest"){
+    document.getElementById("puLegend").innerHTML=`<span><i style="background:var(--gold)"></i>${t("pu_balance")}</span><span><i style="background:var(--green)"></i>${t("pu_cum_amort")}</span><span><i style="background:var(--blue)"></i>${t("pu_cum_cf")}</span>`;
+    document.getElementById("puChart").innerHTML = lineChart([x.sb,x.sa,x.scf],{labels,colors:["var(--gold)","var(--green)","var(--blue)"],h:240,fmt:v=>Math.abs(v)>=1000?chf(v/1000)+"k":chf(v)});
+  } else {
+    document.getElementById("puLegend").innerHTML=`<span><i style="background:var(--gold)"></i>${t("pu_balance")}</span><span><i style="background:var(--red)"></i>${t("pu_cum_int")}</span><span><i style="background:var(--green)"></i>${t("pu_cum_amort")}</span>`;
+    document.getElementById("puChart").innerHTML = lineChart([x.sb,x.si,x.sa],{labels,colors:["var(--gold)","var(--red)","var(--green)"],h:240,fmt:v=>Math.abs(v)>=1000?chf(v/1000)+"k":chf(v)});
+  }
+  document.getElementById("puTbl").innerHTML = `<thead><tr><th>${t("pu_year")}</th><th class="num">${t("pu_interest")}</th><th class="num">${t("pu_amort")}</th><th class="num">${t("pu_upkeep")}</th>${x.mode==="invest"?`<th class="num">${t("pu_rent_col")}</th><th class="num">${t("pu_cf_col")}</th>`:`<th class="num">${t("pu_monthly")}</th><th class="num">${t("pu_cap_col")}</th>`}<th class="num">${t("pu_balance")}</th></tr></thead><tbody>${x.rows.map(r=>`<tr class="row${r.lv}"><td>${CY+r.y}</td><td class="num">${chf(r.i)}</td><td class="num">${chf(r.a)}</td><td class="num">${chf(r.m)}</td>${x.mode==="invest"?`<td class="num">${chf(x.rentY)}</td><td class="num"><b class="${r.cf<0?"neg":"pos"}">${chf(r.cf)}</b></td>`:`<td class="num"><b>${chf((r.i+r.a+r.m)/12)}</b></td><td class="num"><span class="light ${r.lv}" style="width:10px;height:10px"></span></td>`}<td class="num">${chf(r.b)}</td></tr>`).join("")}</tbody>
+    <tfoot><tr><td colspan="7" class="note" style="padding-top:10px">${x.mode==="invest"?t("pu_total_inv",{n:x.N,x:chf(-x.totalCost),m:chf(-x.totalCost/x.N/12),a:chf(x.ca)}):t("pu_total_cost",{n:x.N,x:chf(x.totalCost),m:chf(x.totalCost/x.N/12),a:chf(x.ca)})}</td></tr></tfoot>`;
 }
 
 // ================= orchestration =================
@@ -1675,10 +1838,12 @@ function renderAll(){
   refresh(c);
   const out=document.getElementById("aiOut"); if(!out.dataset.used) out.textContent=t("coach_idle");
 }
+function labelTables(){ document.querySelectorAll("main table").forEach(tb=>{ const ths=[...tb.querySelectorAll("thead th")].map(th=>th.textContent.trim()); if(!tb.querySelector("tbody input, tbody select")) return; tb.classList.add("stack-sm"); if(!ths.length) return; tb.querySelectorAll("tbody tr").forEach(tr=>[...tr.children].forEach((td,i)=>{ td.dataset.label=ths[i]||""; })); }); }
 function refresh(c){
   c=c||calc();
   renderDash(c); renderBudgetTotals(c); renderAccountsCalc(c); renderCash(c); renderSalaryCalc(); renderP3aCalc(c); renderMarketSafe(c); renderFamilyCalc(c); renderJournalVs(); renderProfileCalc(c); renderTax(c); renderPolicyCalc(); renderPurchase(c);
   document.getElementById("aiPayload").textContent = JSON.stringify(aiPayload(c),null,1);
+  labelTables();
 }
 function renderMarketSafe(c){ // avoid rebuilding the hhGross input while typing
   const ae=document.activeElement; if(ae&&ae.dataset&&ae.dataset.path==="profile.hhGross"){ const prop=S.assets.filter(a=>a.type==="property").reduce((s,a)=>s+num(a.value),0); const hh=num(S.profile.hhGross); const b=c.mortTotal*0.06+prop*0.01; const el=document.getElementById("tenab"); if(el) el.innerHTML=hh>0?`<div class="callout mt">${t("mort_tenab",{p:pct(b/hh)})}</div>`:""; return; }
@@ -1690,11 +1855,12 @@ document.getElementById("nav").addEventListener("click",e=>{
   const b=e.target.closest("button[data-tab]"); if(!b) return;
   document.querySelectorAll("nav button[data-tab]").forEach(x=>x.classList.toggle("active",x===b));
   document.querySelectorAll(".ngroup").forEach(g=>{ const has=g.contains(b); g.classList.toggle("has-active",has); if(has) g.classList.remove("closed"); });
+  document.getElementById("curTab").textContent=b.textContent; document.body.classList.remove("nav-open"); if(window.innerWidth<=1000) window.scrollTo(0,0);
   document.querySelectorAll(".tab").forEach(tb=>tb.classList.toggle("active",tb.id==="tab-"+b.dataset.tab));
   try{ history.replaceState(null,"","#"+b.dataset.tab); }catch(_){}
 });
 const openTab = n => { const b=document.querySelector(`nav button[data-tab="${n}"]`); if(b) b.click(); };
-const NUMK = new Set(["amount","month","balance","value","rate","target","saved","premium","franchise","notice","buy","year","ret"]);
+const NUMK = new Set(["share","cash","lpp","income","amount","month","balance","value","rate","target","saved","premium","franchise","notice","buy","year","ret"]);
 function setPath(path,val){ const ks=path.split("."); let o=S; for(let i=0;i<ks.length-1;i++) o=o[ks[i]]; o[ks[ks.length-1]]=val; }
 document.addEventListener("input",e=>{
   const el=e.target;
@@ -1712,6 +1878,13 @@ document.addEventListener("input",e=>{
     setPath(el.dataset.path,v); refresh(); save(); return;
   }
   if(el.dataset.loc){ onLocInput(el); refresh(); save(); return; }
+  if(el.dataset.fundMe||el.dataset.fundPt){ const id=el.dataset.fundMe||el.dataset.fundPt, v=num(el.value);
+    if(el.dataset.fundMe){ let x=S.transfers.find(z=>z.to===id&&!isShared(z.from)); const src=(S.accounts.find(a=>a.type==="current"&&!a.shared)||S.accounts[0]).id;
+      if(!x){ x={id:uid(),label:t("my_part")+" · "+acc(id).name,from:src,to:id,amount:0,freq:"m",month:1}; S.transfers.push(x); }
+      S.transfers.filter(z=>z.to===id&&!isShared(z.from)&&z!==x).forEach(z=>z.amount=0); x.amount=v; x.freq="m"; }
+    else { let i=S.incomes.find(z=>z.account===id); if(!i){ i={id:uid(),label:t("partner_contrib")+" · "+acc(id).name,amount:0,freq:"m",month:1,account:id,partner:true}; S.incomes.push(i); }
+      S.incomes.filter(z=>z.account===id&&z!==i).forEach(z=>z.amount=0); i.amount=v; i.freq="m"; }
+    refresh(); save(); return; }
   if(el.dataset.p3am){ const id=el.dataset.p3am, v=num(el.value); let x=S.transfers.find(z=>z.to===id); const src=(S.accounts.find(a=>a.type==="current"&&!a.shared)||S.accounts[0]).id;
     if(!x){ x={id:uid(),label:"Versement "+acc(id).name,from:src,to:id,amount:0,freq:"m",month:1}; S.transfers.push(x); }
     S.transfers.filter(z=>z.to===id&&z!==x).forEach(z=>z.amount=0); x.amount=v; x.freq="m"; refresh(); save(); return; }
@@ -1739,6 +1912,8 @@ document.addEventListener("change",e=>{ // structural changes that affect other 
   if(e.target.dataset.path==="profile.hasJoint"){ if(S.profile.hasJoint){ S.accounts.forEach(a=>{ if(a.wasShared){ a.shared=true; delete a.wasShared; } }); if(!S.accounts.some(a=>a.shared)) S.accounts.splice(1,0,{id:"a_"+uid(),name:t("q_joint").replace("+ ",""),type:"current",shared:true,balance:0}); } else S.accounts.forEach(a=>{ if(a.shared){ a.shared=false; a.wasShared=true; } }); deferRender(); save(); }
   if(tr&&tr.dataset.list==="accounts"&&e.target.dataset.k==="strategy"){ const a=acc(tr.dataset.id); a.ret={account:0.5,low:2,mid:3,high:4}[a.strategy]; deferRender(); save(); }
   if(tr&&tr.dataset.list==="goals"&&e.target.dataset.k==="account"){ deferRender(); save(); }
+  if(tr&&tr.dataset.list==="expenses"&&e.target.dataset.k==="account"){ const it=S.expenses.find(x=>x.id===tr.dataset.id); if(it&&it.bearer==="acc"&&!isShared(it.account)) delete it.bearer; deferRender(); save(); }
+  if(["profile.splitMode","profile.partnerNet","profile.splitPct"].includes(e.target.dataset.path)){ deferRender(); }
   if(tr&&tr.dataset.list==="transfers"&&["from","to"].includes(e.target.dataset.k)){ deferRender(); save(); }
 });
 const NEW = {
@@ -1749,10 +1924,11 @@ const NEW = {
   assets:()=>({id:uid(),label:t("new_item"),type:"other",value:0}),
   liabilities:()=>({id:uid(),label:t("new_item"),type:"mortgage",balance:0,rate:0,end:""}),
   goals:()=>({id:uid(),label:t("new_goal"),target:1000,saved:0,date:ym(CY+1,CM+1)}),
+  cobuyers:()=>({id:uid(),name:"",share:50,cash:0,lpp:0,income:0}),
   valuables:()=>({id:uid(),label:t("new_item"),kind:"art",buy:0,year:CY,value:0,insured:"none"}),
   policies:()=>({id:uid(),type:"other",insurer:"",product:"",premium:0,freq:"a",franchise:0,end:ym(CY,12)+"-31",notice:3,account:(S.accounts.find(a=>!a.shared)||S.accounts[0]).id})
 };
-const BODY = {valuables:"#valBody",policies:"#polBody",expenses:"#expBody",incomes:"#incBody",transfers:"#trfBody",accounts:"#accBody",assets:"#assetBody",liabilities:"#liabBody",goals:"#goalBody"};
+const BODY = {cobuyers:"#puCoBox tbody",valuables:"#valBody",policies:"#polBody",expenses:"#expBody",incomes:"#incBody",transfers:"#trfBody",accounts:"#accBody",assets:"#assetBody",liabilities:"#liabBody",goals:"#goalBody"};
 document.addEventListener("click",e=>{
   const add=e.target.closest("[data-add]");
   if(add){ const l=add.dataset.add; S[l].push(NEW[l]()); renderAll(); save(); const rows=document.querySelectorAll(BODY[l]+" tr"); rows[rows.length-1]?.querySelector("input")?.select(); return; }
@@ -1771,6 +1947,9 @@ document.addEventListener("click",e=>{
     S.transfers.push(at.dataset.acctr==="in"?{id:uid(),label:t("new_transfer"),from:other,to:me,amount:0,freq:"m",month:1}:{id:uid(),label:t("new_transfer"),from:me,to:other,amount:0,freq:"m",month:1}); renderAll(); save(); return; }
   if(e.target.id==="add3a"){ const n=S.accounts.filter(a=>a.type==="p3a").length+1; const a={id:"a_"+uid(),name:"3a n°"+n,type:"p3a",shared:false,balance:0,strategy:"account",ret:0.5}; S.accounts.push(a); renderAll(); save(); return; }
   const gt=e.target.closest("[data-grp-toggle]"); if(gt){ const g=gt.closest(".ngroup"); g.classList.toggle("closed"); try{ const st=JSON.parse(localStorage.getItem("cime.nav")||"{}"); st[g.dataset.grp]=g.classList.contains("closed"); localStorage.setItem("cime.nav",JSON.stringify(st)); }catch(_){} return; }
+  if(e.target.id==="addReimb"){ const cc=calc(); let i=S.incomes.find(z=>z.reimb); const me=(S.accounts.find(a=>a.type==="current"&&!a.shared)||S.accounts[0]).id;
+    if(!i){ i={id:uid(),label:t("reimb_label"),amount:0,freq:"m",month:1,account:me,reimb:true}; S.incomes.push(i); } i.amount=Math.round(cc.owed); renderAll(); save(); return; }
+  const pm=e.target.closest("[data-pm]"); if(pm){ S.purchase.mode=pm.dataset.pm; renderAll(); save(); return; }
   const go=e.target.closest("[data-goto]"); if(go){ openTab(go.dataset.goto); return; }
   const fb=e.target.closest("#expFilter button"); if(fb){ UI.filter=fb.dataset.f; renderBudgetTables(); refresh(); return; }
   const lb=e.target.closest("#langSeg button"); if(lb){ S.settings.lang=lb.dataset.lang; renderAll(); save(); return; }
@@ -1836,7 +2015,7 @@ function normalize(o){
   const op=o.profile||{}; const SITMAP={"Célibataire":"single","En couple":"couple","Marié·e":"married","Famille monoparentale":"single"}; if(SITMAP[op.situation]) op.situation=SITMAP[op.situation];
   const r={...d,...o,settings:{...d.settings,...(o.settings||{})},profile:{...d.profile,...op,home:{...d.profile.home,...(op.home||{})},work:{...d.profile.work,...(op.work||{})},commute:{...d.profile.commute,...(op.commute||{})}},purchase:{...d.purchase,...(o.purchase||{}),use:{...d.purchase.use,...((o.purchase||{}).use||{})}},salary:{...d.salary,...(o.salary||{})},family:{...d.family,...(o.family||{})},
     lamal:{...d.lamal,...(o.lamal||{}),primes:{...d.lamal.primes,...((o.lamal||{}).primes||{})}}};
-  ["accounts","assets","liabilities","incomes","transfers","expenses","journal","goals","policies","valuables"].forEach(k=>{ if(!Array.isArray(r[k])) r[k]=d[k]||[]; });
+  ["accounts","assets","liabilities","incomes","transfers","expenses","journal","goals","policies","valuables","cobuyers"].forEach(k=>{ if(!Array.isArray(r[k])) r[k]=d[k]||[]; });
   if(!r.accounts.length) r.accounts=d.accounts;
   const ids=new Set(r.accounts.map(a=>a.id));
   ["incomes","expenses","journal"].forEach(k=>r[k].forEach(x=>{ if(!ids.has(x.account)) x.account=r.accounts[0].id; if(x.cat&&!CAT_LABELS[x.cat]) x.cat="other"; }));
@@ -1892,6 +2071,8 @@ function renderHist(){ const el=document.getElementById("histList");
   el.innerHTML=HIST.map((e,i)=>({e,i})).reverse().map(({e,i})=>{ const d=new Date(e.ts); const ch=e.changes.length?e.changes:["…"];
     return `<div class="hist-item"><div class="row"><b>${fmtD(d)} · ${d.toTimeString().slice(0,5)}</b><span class="spacer"></span><button class="btn small" data-hrestore="${i}">${t("hist_restore")}</button></div><ul>${ch.slice(0,6).map(c=>`<li>${c}</li>`).join("")}${ch.length>6?`<li>${t("more_changes",{n:ch.length-6})}</li>`:""}</ul></div>`; }).join(""); }
 function toast(msg){ let el=document.getElementById("toast"); if(!el){ el=document.createElement("div"); el.id="toast"; el.style.cssText="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:13px;z-index:20;transition:opacity .3s"; document.body.appendChild(el); } el.textContent=msg; el.style.opacity="1"; clearTimeout(el._t); el._t=setTimeout(()=>el.style.opacity="0",1600); }
+document.getElementById("menuBtn").onclick=()=>document.body.classList.toggle("nav-open");
+document.getElementById("navBackdrop").onclick=()=>document.body.classList.remove("nav-open");
 document.getElementById("btnUndo").onclick=undo; document.getElementById("btnRedo").onclick=redo;
 document.getElementById("btnHist").onclick=()=>{ recordHistory(); renderHist(); document.getElementById("histModal").classList.add("open"); };
 document.getElementById("histClose").onclick=()=>document.getElementById("histModal").classList.remove("open");
