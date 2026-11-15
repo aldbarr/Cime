@@ -1,0 +1,8 @@
+Version simplifiée de Cime pour GitHub (sans dossiers à envoyer)
+
+1. Sur GitHub : Add file > Upload files > glisse index.html et netlify.toml > Commit changes.
+2. (Optionnel, coach IA) Add file > Create new file
+   Nom du fichier : netlify/functions/coach.mjs
+   Contenu : copie-colle tout le contenu de coach.mjs > Commit changes.
+3. Sur Netlify : Add new site > Import from GitHub > choisis le dépôt > Deploy.
+   Pour le coach IA : ajoute ANTHROPIC_API_KEY (et CLAUDE_MODEL) dans les variables d'environnement.
