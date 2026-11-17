@@ -1778,7 +1778,7 @@ function applyI18n(){
   if(typeof STATUS!=="undefined") document.getElementById("saveTxt").textContent=t(STATUS.key);
 }
 const ESSENTIAL=["dash","profile","budget","accounts","p3a","lamal","coach"];
-function tabVisible(tb){ const o=(S.settings.tabs||{})[tb]; if(o!==undefined) return o; if(tb==="purchase"&&!hasF("project")) return false; if(tb==="market"&&!hasF("sec")) return false; return (S.settings.mode||"simple")==="full"||ESSENTIAL.includes(tb)||(tb==="purchase"&&hasF("project")); }
+function tabVisible(tb){ const o=(S.settings.tabs||{})[tb]; if(o!==undefined) return o; if(tb==="purchase"&&!hasF("project")) return false; if(tb==="market"&&!hasF("sec")) return false; return (S.settings.mode||"simple")==="full"||ESSENTIAL.includes(tb); }
 function applyNav(){
   const mode=S.settings.mode||"simple"; document.body.classList.toggle("simple",mode==="simple");
   document.querySelectorAll("#modeSeg button").forEach(b=>b.classList.toggle("on",b.dataset.mode===mode));
