@@ -35,6 +35,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;fl
 .status{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
 .dot{width:8px;height:8px;border-radius:50%;background:#bbb}
 .dot.ok{background:var(--green)}
+#bkDrop.over{background:var(--gold-soft);border-color:var(--accent,#0E7490)}
 .seg{display:inline-flex;background:var(--nav);border-radius:9px;padding:3px}
 .seg button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;padding:4px 9px;border-radius:7px;cursor:pointer}
 
@@ -236,7 +237,7 @@ svg text{font-family:Inter,sans-serif}
     <div class="seg"><button id="btnUndo" title="Ctrl+Z">↶</button><button id="btnRedo" title="Ctrl+Shift+Z">↷</button></div>
     <button class="btn small" id="btnHist" title="Historique"><span aria-hidden="true">🕘</span><span class="hide-sm"> <span data-i18n="history"></span></span></button>
     <button class="btn small" id="btnExport" title="PDF"><span aria-hidden="true">⤓</span><span class="hide-sm"> <span data-i18n="export"></span></span></button>
-    <button class="btn small" id="btnData" title="Données"><span aria-hidden="true">⇅</span><span class="hide-sm"> <span data-i18n="data"></span></span></button>
+    <button class="btn small" id="btnData" title="Données" style="position:relative"><span class="bk-dot" id="bkDot" style="display:none;position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:var(--orange,#c2410c)"></span><span aria-hidden="true">⇅</span><span class="hide-sm"> <span data-i18n="data"></span></span></button>
   </div>
 </header>
 
@@ -343,6 +344,8 @@ svg text{font-family:Inter,sans-serif}
 
 <!-- DASHBOARD -->
 <section class="tab active" id="tab-dash">
+  <div class="callout" id="bkWelcome" style="display:none;margin-bottom:14px"><div class="row" style="gap:10px;flex-wrap:wrap"><span style="flex:1;min-width:220px" data-i18n="bk_welcome"></span><label class="btn small primary" style="cursor:pointer"><span data-i18n="restore_file"></span><input type="file" class="bkFile" accept="application/json,.json" style="display:none"></label><button class="btn small" id="bkWelcomeX">✕</button></div></div>
+  <div class="callout" id="bkRemind" style="display:none;margin-bottom:14px;border-color:var(--orange)"><div class="row" style="gap:10px;flex-wrap:wrap"><span style="flex:1;min-width:220px" id="bkRemindTxt"></span><button class="btn small primary" id="bkRemindBtn" data-i18n="dl_backup"></button><button class="btn small" id="bkRemindX">✕</button></div></div>
   <div class="grid g4" id="kpis"></div>
   <div class="card mt">
     <div class="row"><h2 style="margin:0" data-i18n="flow_title"></h2><span class="spacer"></span><span class="note" id="flowHint"></span></div>
@@ -713,21 +716,24 @@ svg text{font-family:Inter,sans-serif}
   </div>
 </div>
 <div class="modal-bg" id="modal">
-  <div class="modal">
-    <h2 data-i18n="your_data"></h2>
-    <p class="note" data-i18n="data_note"></p>
-    <textarea id="dataTxt"></textarea>
-    <div class="row mt">
-      <button class="btn" id="dataCopy" data-i18n="copy"></button>
-      <button class="btn" id="dataLoad" data-i18n="import"></button>
-      <button class="btn" id="dataExample" data-i18n="load_example"></button>
-      <button class="btn" id="dataEmpty" data-i18n="clear_all"></button>
-      <button class="btn" id="dataDl" data-i18n="dl_backup"></button>
-      <label class="btn" style="cursor:pointer"><span data-i18n="restore_file"></span><input type="file" id="dataFile" accept="application/json,.json" style="display:none"></label>
-      <span class="spacer"></span>
-      <button class="btn primary" id="dataClose" data-i18n="close"></button>
+  <div class="modal" style="max-height:92vh;overflow:auto">
+    <div class="row"><h2 style="margin:0" data-i18n="your_data"></h2><span class="spacer"></span><button class="btn small" id="dataClose" data-i18n="close"></button></div>
+    <p class="note" data-i18n="bk_note"></p>
+    <div class="grid g2 mt">
+      <div class="callout" style="margin:0"><b data-i18n="bk_save_t"></b><p class="note" style="margin:6px 0 10px" data-i18n="bk_save_d"></p><button class="btn primary" id="dataDl" data-i18n="dl_backup"></button><div class="note mt" id="bkLast"></div></div>
+      <div class="callout drop" id="bkDrop" style="margin:0;border-style:dashed"><b data-i18n="bk_load_t"></b><p class="note" style="margin:6px 0 10px" data-i18n="bk_load_d"></p><label class="btn primary" style="cursor:pointer"><span data-i18n="restore_file"></span><input type="file" id="dataFile" accept="application/json,.json" style="display:none"></label></div>
     </div>
-    <div class="note mt" id="dataMsg"></div>
+    <div class="note mt" id="dataMsg" style="font-weight:600"></div>
+    <details class="mt"><summary class="note" style="cursor:pointer" data-i18n="bk_adv"></summary>
+      <p class="note" data-i18n="data_note"></p>
+      <textarea id="dataTxt"></textarea>
+      <div class="row mt">
+        <button class="btn small" id="dataCopy" data-i18n="copy"></button>
+        <button class="btn small" id="dataLoad" data-i18n="import"></button>
+        <button class="btn small" id="dataExample" data-i18n="load_example"></button>
+        <button class="btn small" id="dataEmpty" data-i18n="clear_all"></button>
+      </div>
+    </details>
   </div>
 </div>
 <script>
@@ -1179,7 +1185,7 @@ hist_note:["Chaque modification est enregistrée (40 dernières, dans ce navigat
 hist_empty:["Aucune modification enregistrée pour l'instant.","No changes recorded yet.","Noch keine Änderungen."],hist_restore:["Revenir avant ce changement","Go back before this change","Vor diese Änderung zurück"],
 hist_restored:["Restauration de la version du {d}","Restored version from {d}","Version vom {d} wiederhergestellt"],more_changes:["… et {n} autre(s)","… and {n} more","… und {n} weitere"],
 undone:["Modification annulée","Change undone","Änderung rückgängig"],redone:["Modification rétablie","Change redone","Änderung wiederhergestellt"],
-dl_backup:["Télécharger (.json)","Download (.json)","Herunterladen (.json)"],restore_file:["Restaurer depuis un fichier","Restore from file","Aus Datei wiederherstellen"],
+dl_backup:["⤓ Télécharger ma sauvegarde","⤓ Download my backup","⤓ Backup herunterladen"],restore_file:["⤒ Restaurer une sauvegarde","⤒ Restore a backup","⤒ Backup wiederherstellen"],
 dl_blocked:["Téléchargement bloqué ici : utilise « Copier ».","Download blocked here: use “Copy”.","Download hier blockiert: «Kopieren» nutzen."],
 coach_nokey:["Coach IA non configuré : ajoute ANTHROPIC_API_KEY dans les variables d'environnement Netlify.","AI coach not configured: add ANTHROPIC_API_KEY to the Netlify environment variables.","KI-Coach nicht konfiguriert: ANTHROPIC_API_KEY in den Netlify-Umgebungsvariablen setzen."],
 f_added:["ajouté","added","hinzugefügt"],f_removed:["supprimé","removed","entfernt"],
@@ -1350,6 +1356,17 @@ sc_tips_loss:["Inscris-toi à l'ORP dès la résiliation (au plus tard le 1er jo
 sc_tips_retire:["Annonce ta retraite à la caisse AVS 3 à 4 mois avant, et choisis à temps rente ou capital LPP (souvent 3 ans avant, selon le règlement).|Capital LPP et 3a : imposés à part à taux réduit ; échelonner les retraits sur plusieurs années réduit l'impôt.|Ajoute la couverture accidents à ta LAMal dès la fin du contrat de travail.|Les frais de trajet et de repas disparaissent ; les impôts baissent mais toutes les rentes sont imposables.|La 13e rente AVS est versée chaque décembre : prévois-la pour les impôts ou les vacances.","Notify your AHV office 3–4 months ahead and choose pension or lump sum in time (often 3 years before, per fund rules).|Pension and 3a lump sums: taxed separately at a reduced rate; spreading withdrawals over several years lowers tax.|Add accident cover to your health insurance when your job ends.|Commuting and meal costs disappear; taxes fall but all pensions are taxable.|The 13th AHV pension is paid each December: plan it for taxes or holidays.","Melde die Pensionierung 3–4 Monate vorher bei der AHV und wähle rechtzeitig Rente oder Kapital (oft 3 Jahre vorher, je nach Reglement).|BVG- und 3a-Kapital: separat und reduziert besteuert; gestaffelte Bezüge sparen Steuern.|Unfalldeckung ab Ende des Arbeitsvertrags in die Grundversicherung einschliessen.|Arbeitsweg und Verpflegung fallen weg; Steuern sinken, aber alle Renten sind steuerbar.|Die 13. AHV-Rente kommt jeweils im Dezember: für Steuern oder Ferien einplanen."],
 sc_src:["Sources : OFAS, montants 2026 (rente AVS 1 260–2 520 CHF/mois, couple 3 780, 13e rente dès déc. 2026) · LACI : indemnités 70 % / 80 %, gain assuré max. 148 200 CHF/an, retenues AVS 5,3 %, ANP 2,47 %, LPP 0,55 % (OCE Genève) · LPP : taux minimal 1,25 % en 2026 puis 2 % dès 2027, taux de conversion légal 6,8 % sur la part obligatoire (souvent 5 à 6 % dans les caisses enveloppantes) · impôts : barème de ta commune (onglet Impôts & 3a). Estimation, pas un conseil.","Sources: FSIO 2026 amounts (AHV pension CHF 1,260–2,520/month, couple 3,780, 13th pension from Dec 2026) · Unemployment act: benefits 70%/80%, max insured CHF 148,200/yr, deductions AHV 5.3%, accident 2.47%, pension 0.55% (Geneva OCE) · Pension: minimum rate 1.25% in 2026 then 2% from 2027, legal conversion rate 6.8% on the mandatory part (often 5–6% in envelope funds) · taxes: your commune's scale. Estimate, not advice.","Quellen: BSV, Beträge 2026 (AHV-Rente 1 260–2 520 CHF/Monat, Ehepaar 3 780, 13. Rente ab Dez. 2026) · AVIG: Taggelder 70 %/80 %, max. versichert 148 200 CHF/Jahr, Abzüge AHV 5,3 %, NBU 2,47 %, BVG 0,55 % (OCE Genf) · BVG: Mindestzins 1,25 % 2026, 2 % ab 2027, Umwandlungssatz 6,8 % obligatorisch (umhüllend oft 5–6 %) · Steuern: Tarif deiner Gemeinde. Schätzung, keine Beratung."],
 sc_no_draw:["Intact","Untouched","Unangetastet"],
+bk_note:["Tes données restent dans ce navigateur. Si tu vides le cache, changes de navigateur ou d'appareil, elles disparaissent : garde un fichier de sauvegarde (sur ton ordinateur, ton drive ou par e-mail) et recharge-le ici.","Your data stays in this browser. If you clear the cache or switch browser/device, it's gone: keep a backup file (on your computer, drive or by e-mail) and load it here.","Deine Daten bleiben in diesem Browser. Leerst du den Cache oder wechselst Browser/Gerät, sind sie weg: Bewahre eine Sicherungsdatei auf (Computer, Cloud oder E-Mail) und lade sie hier."],
+bk_save_t:["1. Sauvegarder","1. Back up","1. Sichern"],bk_save_d:["Un seul fichier .json avec toutes tes données ET l'historique des modifications (40 dernières versions).","One .json file with all your data AND the change history (last 40 versions).","Eine .json-Datei mit allen Daten UND dem Änderungsverlauf (letzte 40 Versionen)."],
+bk_load_t:["2. Retrouver mes données","2. Get my data back","2. Daten zurückholen"],bk_load_d:["Choisis le fichier ou glisse-le ici. Tout est restauré, historique compris ; la version actuelle reste récupérable via ↶.","Pick the file or drop it here. Everything is restored, history included; the current version stays recoverable with ↶.","Datei wählen oder hierher ziehen. Alles wird wiederhergestellt, inkl. Verlauf; die aktuelle Version bleibt mit ↶ abrufbar."],
+bk_adv:["Avancé : voir / coller le JSON, exemple, tout effacer","Advanced: view / paste JSON, example, clear all","Erweitert: JSON ansehen / einfügen, Beispiel, alles löschen"],
+bk_last:["Dernière sauvegarde depuis ce navigateur : {d}","Last backup from this browser: {d}","Letztes Backup aus diesem Browser: {d}"],bk_never:["Aucune sauvegarde téléchargée depuis ce navigateur.","No backup downloaded from this browser yet.","Noch kein Backup aus diesem Browser."],
+bk_saved:["✓ Sauvegarde prête : {f}. Range-la en lieu sûr.","✓ Backup ready: {f}. Keep it somewhere safe.","✓ Backup bereit: {f}. Sicher aufbewahren."],
+bk_restored:["✓ Données restaurées (sauvegarde du {d}, {n} versions d'historique).","✓ Data restored (backup of {d}, {n} history versions).","✓ Daten wiederhergestellt (Backup vom {d}, {n} Verlaufsversionen)."],bk_restored_h:["Restauration de la sauvegarde du {d}","Restored backup of {d}","Backup vom {d} wiederhergestellt"],
+bk_welcome:["Première visite, ou tu as vidé le cache de ton navigateur ? Si tu as un fichier de sauvegarde Cime, recharge-le pour retrouver tes données et leur historique. Sinon, tu vois un exemple que tu peux modifier.","First visit, or did you clear your browser cache? If you have a Cime backup file, load it to get your data and history back. Otherwise you're looking at an example you can edit.","Erster Besuch oder Browser-Cache geleert? Mit deiner Cime-Sicherungsdatei holst du Daten und Verlauf zurück. Sonst siehst du ein Beispiel zum Anpassen."],
+bk_remind:["Ta dernière sauvegarde date de {n} jours et tu as fait des changements depuis. Télécharge un fichier pour ne rien perdre si le cache est vidé.","Your last backup is {n} days old and you've made changes since. Download a file so nothing is lost if the cache is cleared.","Dein letztes Backup ist {n} Tage alt und du hast seither Änderungen gemacht. Lade eine Datei herunter, damit nichts verloren geht."],
+bk_remind_never:["Tu n'as encore jamais sauvegardé tes données. Si le cache du navigateur est vidé, tout serait perdu : télécharge un fichier de sauvegarde.","You've never backed up your data. If the browser cache is cleared, everything would be lost: download a backup file.","Du hast deine Daten noch nie gesichert. Wird der Browser-Cache geleert, ist alles weg: lade eine Sicherungsdatei herunter."],
+bk_restored_old:["✓ Données restaurées (ancien format, sans historique).","✓ Data restored (old format, no history).","✓ Daten wiederhergestellt (altes Format, ohne Verlauf)."],
 g_overview:["Vue d'ensemble","Overview","Übersicht"],g_budget:["Budget","Budget","Budget"],g_optimize:["Optimiser","Optimise","Optimieren"],g_market:["Marchés & IA","Markets & AI","Märkte & KI"],
 tab_profile:["Profil & lieux","Profile & places","Profil & Orte"],tab_purchase:["Achat immobilier","Buying a home","Eigenheimkauf"],
 pf_household:["Ménage","Household","Haushalt"],pf_commute:["Trajet domicile–travail","Commute","Arbeitsweg"],pf_home:["Domicile","Residence","Wohnort"],pf_work:["Lieu de travail","Workplace","Arbeitsort"],
@@ -2991,7 +3008,7 @@ document.getElementById("salApply").addEventListener("click",()=>{
 });
 // data modal
 const modal=document.getElementById("modal"), dataTxt=document.getElementById("dataTxt"), dataMsg=document.getElementById("dataMsg");
-document.getElementById("btnData").onclick=()=>{ dataTxt.value=JSON.stringify(S,null,1); dataMsg.textContent=""; modal.classList.add("open"); };
+document.getElementById("btnData").onclick=()=>{ dataTxt.value=JSON.stringify(S,null,1); dataMsg.textContent=""; renderBkLast(); modal.classList.add("open"); };
 document.getElementById("dataClose").onclick=()=>modal.classList.remove("open");
 document.getElementById("dataCopy").onclick=async()=>{ try{ await navigator.clipboard.writeText(dataTxt.value); dataMsg.textContent=t("copied"); }catch(_){ dataTxt.select(); dataMsg.textContent=t("selected"); } };
 document.getElementById("dataLoad").onclick=()=>{ try{ const o=JSON.parse(dataTxt.value); if(!o.profile||!Array.isArray(o.expenses)) throw 0; recordHistory(); S=normalize(o); renderAll(); save(); dataMsg.textContent=t("imported"); }catch(_){ dataMsg.textContent=t("invalid"); } };
@@ -3254,7 +3271,7 @@ function recordHistory(note){
   let ch=[]; try{ ch=diffStates(JSON.parse(lastJSON),JSON.parse(cur)); }catch(_){}
   if(note) ch.unshift(note);
   HIST.push({ts:Date.now(),changes:ch,before:lastJSON}); if(HIST.length>40) HIST.shift();
-  REDO=[]; lastJSON=cur; persistHist(); updateUndo();
+  REDO=[]; lastJSON=cur; persistHist(); updateUndo(); if(typeof updateBkHints==="function") updateBkHints();
 }
 function applyStateStr(str){ const st=JSON.parse(str); S={...normalize(st),settings:S.settings}; lastJSON=stateStr(); renderAll(); clearTimeout(histTimer); clearTimeout(saveTimer); saveTimer=setTimeout(flush,300); try{ localStorage.setItem(LS_KEY,JSON.stringify(S)); }catch(_){} }
 function undo(){ recordHistory(); const e=HIST.pop(); if(!e) return; REDO.push({ts:Date.now(),changes:e.changes,after:stateStr()}); applyStateStr(e.before); persistHist(); updateUndo(); toast(t("undone")); }
@@ -3286,11 +3303,51 @@ document.getElementById("histList").addEventListener("click",e=>{ const b=e.targ
 document.addEventListener("keydown",e=>{ const tag=(e.target.tagName||"").toLowerCase(); if(["input","textarea","select"].includes(tag)) return;
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){ e.preventDefault(); e.shiftKey?redo():undo(); }
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){ e.preventDefault(); redo(); } });
-// backup download / file restore
-document.getElementById("dataDl").onclick=async()=>{ const fn=`cime-${new Date().toISOString().slice(0,10)}.json`, data=JSON.stringify(S,null,1);
-  try{ const dl=window.claude&&claude.use?await claude.use("downloads"):null; if(dl){ try{ await dl.save({filename:fn,data}); }catch(_){ dataMsg.textContent=t("dl_blocked"); } return; } }catch(_){}
-  try{ const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=fn; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); }catch(_){ dataMsg.textContent=t("dl_blocked"); } };
-document.getElementById("dataFile").onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ const o=JSON.parse(await f.text()); if(!o.profile||!Array.isArray(o.expenses)) throw 0; recordHistory(); S=normalize(o); renderAll(); save(); dataMsg.textContent=t("imported"); }catch(_){ dataMsg.textContent=t("invalid"); } e.target.value=""; };
+// ================= backup file (data + history) =================
+const BK_KEY="cime.lastBackup", BK_DAYS=30;
+let FRESH=false; // no saved data found at start (first visit or cleared browser)
+function bkLastTs(){ try{ return +localStorage.getItem(BK_KEY)||0; }catch(_){ return 0; } }
+function renderBkLast(){ const ts=bkLastTs(), el=document.getElementById("bkLast"); if(el) el.textContent=ts?t("bk_last",{d:fmtD(new Date(ts))+" "+new Date(ts).toTimeString().slice(0,5)}):t("bk_never"); }
+function bkFile(){ recordHistory(); return JSON.stringify({app:"cime",format:2,exported:new Date().toISOString(),state:S,history:HIST},null,1); }
+async function downloadBackup(msgEl){
+  const fn=`cime-sauvegarde-${new Date().toISOString().slice(0,10)}.json`, data=bkFile(); let ok=false;
+  try{ const dl=window.claude&&claude.use?await claude.use("downloads"):null;
+    if(dl){ try{ await dl.save({filename:fn,data}); ok=true; }catch(e){ if(msgEl) msgEl.textContent=e&&e.code==="declined"?t("exp_declined"):t("dl_blocked"); } }
+    else throw 0; }catch(_){ if(!ok){ try{ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([data],{type:"application/json"})); a.download=fn; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),3000); ok=true; }catch(_){ if(msgEl) msgEl.textContent=t("dl_blocked"); } } }
+  if(ok){ try{ localStorage.setItem(BK_KEY,String(Date.now())); }catch(_){} if(msgEl) msgEl.textContent=t("bk_saved",{f:fn}); renderBkLast(); updateBkHints(); }
+}
+function restoreBackup(text,msgEl){
+  let o; try{ o=JSON.parse(text); }catch(_){ if(msgEl) msgEl.textContent=t("invalid"); return false; }
+  const st=o&&o.app==="cime"&&o.state?o.state:o; if(!st||!st.profile||!Array.isArray(st.expenses)){ if(msgEl) msgEl.textContent=t("invalid"); return false; }
+  recordHistory(); const before=stateStr(), keepSettings=S.settings;
+  S=normalize(st); if(!st.settings) S.settings=keepSettings;
+  const H=Array.isArray(o.history)?o.history.filter(e=>e&&e.ts&&typeof e.before==="string"):[];
+  HIST=H.slice(-39); HIST.push({ts:Date.now(),changes:[o.exported?t("bk_restored_h",{d:fmtD(new Date(o.exported))}):t("bk_restored_old")],before}); REDO=[];
+  lastJSON=stateStr(); persistHist(); updateUndo(); renderAll(); save(); clearTimeout(histTimer);
+  FRESH=false; try{ localStorage.setItem(BK_KEY,String(Date.now())); }catch(_){}
+  updateBkHints(); renderBkLast();
+  const msg=o.exported?t("bk_restored",{n:H.length,d:fmtD(new Date(o.exported))}):t("bk_restored_old"); if(msgEl) msgEl.textContent=msg; toast(msg); return true;
+}
+function updateBkHints(){
+  const ts=bkLastTs(), hasData=(S.expenses||[]).length+(S.incomes||[]).length>0, changed=HIST.some(e=>e.ts>ts);
+  const due=hasData&&changed&&(!ts||Date.now()-ts>BK_DAYS*864e5)&&!FRESH;
+  const dot=document.getElementById("bkDot"); if(dot) dot.style.display=due?"":"none";
+  const w=document.getElementById("bkWelcome"); if(w) w.style.display=FRESH&&!sessionStorageGet("bkW")?"":"none";
+  const r=document.getElementById("bkRemind"); if(r){ r.style.display=due&&!sessionStorageGet("bkR")?"":"none"; document.getElementById("bkRemindTxt").textContent=ts?t("bk_remind",{n:Math.floor((Date.now()-ts)/864e5)}):t("bk_remind_never"); }
+}
+function sessionStorageGet(k){ try{ return sessionStorage.getItem(k); }catch(_){ return UI["_"+k]; } }
+function sessionStorageSet(k){ try{ sessionStorage.setItem(k,"1"); }catch(_){ UI["_"+k]="1"; } }
+document.getElementById("dataDl").onclick=()=>downloadBackup(dataMsg);
+document.getElementById("bkRemindBtn").onclick=()=>downloadBackup(null);
+document.getElementById("bkRemindX").onclick=()=>{ sessionStorageSet("bkR"); updateBkHints(); };
+document.getElementById("bkWelcomeX").onclick=()=>{ sessionStorageSet("bkW"); updateBkHints(); };
+const readFile=async(f,msgEl)=>{ if(!f) return; try{ restoreBackup(await f.text(),msgEl); }catch(_){ if(msgEl) msgEl.textContent=t("invalid"); } };
+document.getElementById("dataFile").onchange=async e=>{ await readFile(e.target.files[0],dataMsg); e.target.value=""; };
+document.querySelectorAll(".bkFile").forEach(inp=>inp.onchange=async e=>{ await readFile(e.target.files[0],null); e.target.value=""; });
+const drop=document.getElementById("bkDrop");
+["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add("over"); }));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop",e=>readFile(e.dataTransfer.files[0],dataMsg));
 async function flush(){
   if(!dbRef) return; if(writing){ pending=true; return; }
   writing=true; setStatus(false,"saving");
@@ -3309,17 +3366,17 @@ async function initDb(){
     dbRef=db.doc("data/users/"+id+"/budget");
     const timer=setTimeout(()=>setStatus(false,"save_unreach"),10000);
     const snap=await dbRef.get(); clearTimeout(timer);
-    if(snap.exists){ const d=snap.data(); if(d&&d.state){ S=normalize(JSON.parse(d.state)); renderAll(); lastJSON=stateStr(); } setStatus(true,"save_cloud"); }
+    if(snap.exists){ const d=snap.data(); if(d&&d.state){ S=normalize(JSON.parse(d.state)); renderAll(); lastJSON=stateStr(); FRESH=false; updateBkHints(); } setStatus(true,"save_cloud"); }
     else { setStatus(true,"save_cloud"); flush(); }
   }catch(e){ setStatus(false,"save_local"); }
 }
 (function boot(){
-  try{ const raw=localStorage.getItem(LS_KEY)||localStorage.getItem("francclair.v1"); if(raw) S=normalize(JSON.parse(raw)); }catch(_){}
+  try{ const raw=localStorage.getItem(LS_KEY)||localStorage.getItem("francclair.v1"); if(raw) S=normalize(JSON.parse(raw)); else FRESH=true; }catch(_){ FRESH=true; }
   if(!S.settings.lang){ const n=(navigator.language||"fr").slice(0,2); S.settings.lang = LANGS[n]!==undefined?n:"fr"; }
   try{ const st=JSON.parse(localStorage.getItem("cime.nav")||"{}"); document.querySelectorAll(".ngroup").forEach(g=>{ if(st[g.dataset.grp]) g.classList.add("closed"); }); }catch(_){}
   document.querySelector(".ngroup")&&document.querySelector(".ngroup").classList.add("has-active");
   try{ HIST=JSON.parse(localStorage.getItem(HIST_KEY)||"[]"); }catch(_){ HIST=[]; }
-  renderAll(); setupHelp(); setupCards(); renderSources(); setStatus(false,"save_local"); lastJSON=stateStr(); updateUndo();
+  renderAll(); setupHelp(); setupCards(); renderSources(); setStatus(false,"save_local"); lastJSON=stateStr(); updateUndo(); updateBkHints();
   const h=(location.hash||"").slice(1); if(h) openTab(h);
   initDb();
 })();
